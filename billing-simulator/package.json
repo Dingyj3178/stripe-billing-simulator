@@ -1,0 +1,41 @@
+{
+  "name": "billing-simulator",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.6.2",
+    "@heroicons/react": "^1.0.4",
+    "@markdoc/next.js": "^0.1.2",
+    "@tailwindcss/forms": "^0.4.0",
+    "axios": "^0.24.0",
+    "date-fns": "^2.28.0",
+    "downloadjs": "^1.4.7",
+    "formik": "^2.2.9",
+    "heroicons": "^1.0.6",
+    "html-to-image": "^1.9.0",
+    "html2canvas": "^1.4.1",
+    "next": "12.1.4",
+    "react": "18.0.0",
+    "react-datepicker": "^4.7.0",
+    "react-dom": "18.0.0",
+    "react-use": "^17.4.0",
+    "react-xarrows": "^2.0.2",
+    "tailwindcss-break": "^1.0.0",
+    "tailwindcss-multi-column": "^1.0.2",
+    "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.2",
+    "autoprefixer": "^10.4.4",
+    "eslint": "8.13.0",
+    "eslint-config-next": "12.1.4",
+    "postcss": "^8.4.12",
+    "tailwindcss": "^3.0.23"
+  }
+}
