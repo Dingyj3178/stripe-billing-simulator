@@ -214,7 +214,9 @@ export default function Home({ query }) {
                       />
                     </div>
                     {formik.errors.create_date ? (
-                      <div>{formik.errors.create_date}</div>
+                      <div className="text-sm text-red-600">
+                        {formik.errors.create_date}
+                      </div>
                     ) : null}
                   </div>
 
@@ -248,7 +250,9 @@ export default function Home({ query }) {
                       />
                     </div>
                     {formik.errors.billing_cycle_anchor ? (
-                      <div>{formik.errors.billing_cycle_anchor}</div>
+                      <div className="text-sm text-red-600">
+                        {formik.errors.billing_cycle_anchor}
+                      </div>
                     ) : null}
                   </div>
                   <div className="sm:col-span-1">
@@ -278,7 +282,9 @@ export default function Home({ query }) {
                       />
                     </div>
                     {formik.errors.trial_end ? (
-                      <div>{formik.errors.trial_end}</div>
+                      <div className="text-sm text-red-600">
+                        {formik.errors.trial_end}
+                      </div>
                     ) : null}
                   </div>
 
@@ -304,7 +310,9 @@ export default function Home({ query }) {
                     </div>
                     {formik.touched.proration_behavior &&
                     formik.errors.proration_behavior ? (
-                      <div>{formik.errors.proration_behavior}</div>
+                      <div className="text-sm text-red-600">
+                        {formik.errors.proration_behavior}
+                      </div>
                     ) : null}
                   </div>
                   <div className="sm:col-span-2 border-t pt-5">
@@ -346,7 +354,9 @@ export default function Home({ query }) {
                       />
                     </div>
                     {formik.touched.unit_amount && formik.errors.unit_amount ? (
-                      <div>{formik.errors.unit_amount}</div>
+                      <div className="text-sm text-red-600">
+                        {formik.errors.unit_amount}
+                      </div>
                     ) : null}
                   </div>
                   <div className="sm:col-span-1">
@@ -369,7 +379,9 @@ export default function Home({ query }) {
                       </select>
                     </div>
                     {formik.touched.currency && formik.errors.currency ? (
-                      <div>{formik.errors.currency}</div>
+                      <div className="text-sm text-red-600">
+                        {formik.errors.currency}
+                      </div>
                     ) : null}
                   </div>
                   <div className="sm:col-span-1">
@@ -395,7 +407,9 @@ export default function Home({ query }) {
                       </select>
                     </div>
                     {formik.touched.interval && formik.errors.interval ? (
-                      <div>{formik.errors.interval}</div>
+                      <div className="text-sm text-red-600">
+                        {formik.errors.interval}
+                      </div>
                     ) : null}
                   </div>
                   <div className="sm:col-span-1">
@@ -418,7 +432,9 @@ export default function Home({ query }) {
                     </div>
                     {formik.touched.interval_count &&
                     formik.errors.interval_count ? (
-                      <div>{formik.errors.interval_count}</div>
+                      <div className="text-sm text-red-600">
+                        {formik.errors.interval_count}
+                      </div>
                     ) : null}
                   </div>
                 </div>
