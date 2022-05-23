@@ -161,7 +161,7 @@ export default function Home({ query }) {
     }),
     onSubmit: (values) => {
       setParameter(values);
-      console.log(parameter);
+      // console.log(parameter);
     },
   });
 
