@@ -1,0 +1,36 @@
+### What this tool can do
+
+- Visualize your billing schedule
+- Create an script for Postman to run the subscription through each event by [test clock](https://stripe.com/docs/billing/testing/test-clocks)
+
+### What this tool can not do
+
+- This tool doesn't cover all parameters for subscription and pricing.
+- This tool doesn’t support [complex pricing model](https://stripe.com/docs/products-prices/pricing-models)
+- This tool doesn’t support [subscription shedule](https://stripe.com/docs/billing/subscriptions/subscription-schedules)
+
+### Postman setup
+
+Please follow the [setup guide](https://www.postman.com/stripedev/workspace/stripe-developers/collection/665823-10d43090-8785-4906-91fa-e70de972abef?ctx=documentation) to finish the setup for stripe postman api collection.
+
+![Image](/postman-setup.png)
+
+Once you finished setup, you find the scret key of Stripe in the environment tab.
+
+![Image](/postman-env.png)
+
+### Import the script
+
+Copy the script and import to postman as **Raw Text.**
+
+![Image](/import-script.png)
+
+Now you can run the scenorio by once and confirm it in your own Stripe Dashboard.
+
+![Image](/postman-run-1.png)
+
+![Image](/postman-run-2.png)
+
+![Image](/postman-result.png)
+
+![Image](/stripe-billing-dashboard.png)
