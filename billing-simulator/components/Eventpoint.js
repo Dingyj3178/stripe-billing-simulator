@@ -141,26 +141,32 @@ function Eventpoint({ parameter }) {
       365;
   }
 
-  const width1 = (width - 16) * (startPoint / timeline);
+  const width1 = (width - 6) * (startPoint / timeline) - 48 + 6;
   const width2 =
-    (width - 16) * (trialEndPoint / timeline) - 96 - width1 > 0
-      ? (width - 16) * (trialEndPoint / timeline) - 96 - width1
+    (width - 6) * (trialEndPoint / timeline) - 48 + 6 - 96 - width1 > 0
+      ? (width - 6) * (trialEndPoint / timeline) + 6 - 48 - 96 - width1
       : 0;
   const width3 =
-    (width - 16) * (billingPoint / timeline) -
+    (width - 6) * (billingPoint / timeline) -
+      48 +
+      6 -
       96 -
       96 * (trialEndPoint === 0 ? 0 : 1) -
       width1 -
       width2 >
     0
-      ? (width - 16) * (billingPoint / timeline) -
+      ? (width - 6) * (billingPoint / timeline) -
+        48 +
+        6 -
         96 -
         96 * (trialEndPoint === 0 ? 0 : 1) -
         width1 -
         width2
       : 0;
   const width4 =
-    (width - 16) * (updatePoint / timeline) -
+    (width - 6) * (updatePoint / timeline) -
+    48 +
+    6 -
     96 -
     96 * (trialEndPoint === 0 ? 0 : 1) -
     96 * (billingPoint === 0 ? 0 : 1) -
@@ -186,7 +192,7 @@ function Eventpoint({ parameter }) {
   return (
     <div className=" bottom-5">
       {/* create the event description */}
-      <div className="pt-10 mx-[10px] relative">
+      <div className="pt-10 mx-12 relative">
         <div
           className="static inline-block h-2"
           style={{ width: width1 + "px" }}
@@ -243,7 +249,7 @@ function Eventpoint({ parameter }) {
           id="d-update-point"
           class=" inline-block px-3 py-0.5 rounded-full text-sm font-medium text-gray-50 bg-violet-500 mb-20 break-words w-24 text-center "
         >
-          Update Charge
+          Charge for Update
         </span>
       </div>
 
@@ -252,9 +258,9 @@ function Eventpoint({ parameter }) {
         <div
           id="p-create_date"
           className={classNames(
-            "w-5 h-5 bg-[#80E9FF] border-[#7A73FF] border-2 rounded-full absolute -bottom-3 "
+            "w-3 h-3 bg-[#80E9FF] border-[#7A73FF] border-2  rounded-full absolute -bottom-2 "
           )}
-          style={{ left: (width - 20) * (startPoint / timeline) + "px" }}
+          style={{ left: (width - 6) * (startPoint / timeline) + "px" }}
         />
         <Xarrow
           startAnchor={"bottom"}
@@ -271,10 +277,10 @@ function Eventpoint({ parameter }) {
             <div
               id="p-trial_end"
               className={classNames(
-                "w-5 h-5 bg-[#80E9FF] border-[#7A73FF] border-2 rounded-full absolute -bottom-3 "
+                "w-3 h-3 bg-[#80E9FF] border-[#7A73FF] border-2 rounded-full absolute -bottom-2 "
               )}
               style={{
-                left: (width - 20) * (trialEndPoint / timeline) + "px",
+                left: (width - 6) * (trialEndPoint / timeline) + "px",
               }}
             />
             <Xarrow
@@ -294,10 +300,10 @@ function Eventpoint({ parameter }) {
             <div
               id="p-billing-date"
               className={classNames(
-                "w-5 h-5 bg-[#80E9FF] border-[#7A73FF] border-2 rounded-full absolute -bottom-3 "
+                "w-3 h-3 bg-[#80E9FF] border-[#7A73FF] border-2 rounded-full absolute -bottom-2 "
               )}
               style={{
-                left: (width - 20) * (billingPoint / timeline) + "px",
+                left: (width - 6) * (billingPoint / timeline) + "px",
               }}
             />
             <Xarrow
@@ -316,10 +322,10 @@ function Eventpoint({ parameter }) {
           <div
             id="p-update-point"
             className={classNames(
-              "w-5 h-5 bg-[#80E9FF] border-[#7A73FF] border-2 rounded-full absolute -bottom-3 "
+              "w-3 h-3 bg-[#80E9FF] border-[#7A73FF] border-2 rounded-full absolute -bottom-2 "
             )}
             style={{
-              left: (width - 20) * (updatePoint / timeline) + "px",
+              left: (width - 6) * (updatePoint / timeline) + "px",
             }}
           />
           <Xarrow

@@ -169,9 +169,9 @@ function Period({ parameter }) {
       <div ref={ref} className="h-24 mx-12 relative ">
         <div
           className={classNames(
-            "w-5 h-5 rounded-full absolute place-items-center grid "
+            "w-3 h-3 rounded-full absolute place-items-center grid "
           )}
-          style={{ left: (width - 20) * (startPoint / timeline) + "px" }}
+          style={{ left: (width - 6) * (startPoint / timeline) + "px" }}
         >
           {parameter.proration_behavior === "none" &&
           parameter.billing_cycle_anchor !== null ? null : (
@@ -181,10 +181,10 @@ function Period({ parameter }) {
         {parameter.trial_end === null ? null : (
           <div
             className={classNames(
-              "w-5 h-5  rounded-full absolute place-items-center grid"
+              "w-3 h-3  rounded-full absolute place-items-center grid"
             )}
             style={{
-              left: (width - 20) * (trialEndPoint / timeline) + "px",
+              left: (width - 6) * (trialEndPoint / timeline) + "px",
             }}
           >
             <div id="line-trial_end" className=" w-1 h-12 bg-[#0A2540] " />
@@ -210,10 +210,10 @@ function Period({ parameter }) {
           <div>
             <div
               className={classNames(
-                "w-5 h-5 rounded-full absolute place-items-center grid "
+                "w-3 h-3 rounded-full absolute place-items-center grid "
               )}
               style={{
-                left: (width - 20) * (billingPoint / timeline) + "px",
+                left: (width - 6) * (billingPoint / timeline) + "px",
               }}
             >
               <div id="line-billing-date" className=" w-1 h-12 bg-[#0A2540]" />
@@ -245,10 +245,10 @@ function Period({ parameter }) {
         <div>
           <div
             className={classNames(
-              "w-5 h-5  rounded-full absolute place-items-center grid"
+              "w-3 h-3  rounded-full absolute place-items-center grid"
             )}
             style={{
-              left: (width - 20) * (updatePoint / timeline) + "px",
+              left: (width - 6) * (updatePoint / timeline) + "px",
             }}
           >
             <div id="line-update-point" className=" w-1 h-12 bg-[#0A2540]" />
