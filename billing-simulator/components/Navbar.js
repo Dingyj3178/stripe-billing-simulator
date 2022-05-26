@@ -16,15 +16,17 @@ export default function Navbar() {
     <Disclosure as="nav" className="bg-[#F6F9FB] ">
       {({ open }) => (
         <>
-          <div className=" mx-12 sm:mx-12 md:mx-36 lg:mx-64 xl:mx-96">
+          <div className="max-w-sm sm:max-w-xl md:max-w-2xl lg:max-w-5xl xl:max-w-7xl mx-auto">
             <div className="flex justify-between h-16">
               <div className="flex">
                 <div className="flex-shrink-0 flex items-center">
-                  <h3 className="text-xl">Billing Simulator</h3>
+                  <a href="/" className="text-xl">
+                    Billing Simulator
+                  </a>
                 </div>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                <button
+                {/* <button
                   type="button"
                   className="bg-white rounded-full flex text-sm focus:outline-none "
                 >
@@ -33,7 +35,7 @@ export default function Navbar() {
                     className="h-6 w-6 bg-[#F6F9FB]"
                     aria-hidden="true"
                   />
-                </button>
+                </button> */}
 
                 <Menu as="div" className="ml-3 relative z-50">
                   <div>
@@ -55,19 +57,6 @@ export default function Navbar() {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
-                            )}
-                          >
-                            About
-                          </a>
-                        )}
-                      </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
                           <a
@@ -133,15 +122,6 @@ export default function Navbar() {
                   className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
                 >
                   How to use
-                </Disclosure.Button>
-                <Disclosure.Button
-                  as="a"
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
-                >
-                  About
                 </Disclosure.Button>
                 <Disclosure.Button
                   as="a"
