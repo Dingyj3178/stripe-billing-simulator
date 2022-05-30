@@ -64,7 +64,10 @@ function Timeline({ parameter }) {
     <div className="flex justify-between -mt-2 mb-10 mx-12 ">
       {timelineArray.map((id) => {
         return (
-          <div className=" w-3 h-3  bg-yellow-500 rounded-full relative">
+          <div
+            key={id}
+            className=" w-3 h-3  bg-yellow-500 rounded-full relative"
+          >
             <div className=" absolute -translate-x-1/3 left-1/3 top-7 w-20 text-center z-10">
               {id.getFullYear() +
                 "/" +

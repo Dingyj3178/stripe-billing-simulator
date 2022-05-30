@@ -20,12 +20,21 @@ import addDays from "date-fns/addDays";
 import addYears from "date-fns/addYears";
 import addHours from "date-fns/addHours";
 
+import dynamic from "next/dynamic";
+
 import Navbar from "../components/Navbar";
 import Timeline from "../components/Timeline";
-import Eventpoint from "../components/Eventpoint";
-import Period from "../components/Period";
+// import Eventpoint from "../components/Eventpoint";
+// import Period from "../components/Period";
 
-export default function Home({ query }) {
+const Eventpoint = dynamic(() => import("../components/Eventpoint"), {
+  ssr: false,
+});
+const Period = dynamic(() => import("../components/Period"), {
+  ssr: false,
+});
+
+export default function Home() {
   const textAreaRef = useRef(null);
 
   // const router = useRouter();
@@ -454,11 +463,11 @@ export default function Home({ query }) {
                   </div>
                 </div>
               </div>
-              <div class="pt-5">
-                <div class="flex justify-end">
+              <div className="pt-5">
+                <div className="flex justify-end">
                   <button
                     type="submit"
-                    class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     Update
                   </button>
@@ -523,7 +532,7 @@ export default function Home({ query }) {
                   disabled
                   ref={textAreaRef}
                   // rows="3"
-                  class=" shadow-sm block w-full h-56 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                  className=" shadow-sm block w-full h-56 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
                   value={JSON.stringify(
                     {
                       info: {
@@ -982,10 +991,10 @@ export default function Home({ query }) {
   );
 }
 
-export async function getServerSideProps({ query }) {
-  // console.log(query); // `{ id: 'foo' }`
-  //...
-  return {
-    props: { query }, // will be passed to the page component as props
-  };
-}
+// export async function getServerSideProps({ query }) {
+//   // console.log(query); // `{ id: 'foo' }`
+//   //...
+//   return {
+//     props: { query }, // will be passed to the page component as props
+//   };
+// }

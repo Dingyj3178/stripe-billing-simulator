@@ -222,18 +222,18 @@ function Eventpoint({ parameter }) {
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
-  console.log("width:" + timelineWidth);
-  console.log("width1:" + width1);
-  console.log("width2:" + width2);
-  console.log("width3:" + width3);
-  console.log("width4:" + width4);
-  console.log("endDate:" + endDate);
-  console.log("updateDate:" + updateDate);
-  console.log("timeline:" + timeline);
-  console.log("startPoint:" + startPoint);
-  console.log("trialEndPoint:" + trialEndPoint);
-  console.log("billingPoint:" + billingPoint);
-  console.log("updatePoint:" + updatePoint);
+  // console.log("width:" + timelineWidth);
+  // console.log("width1:" + width1);
+  // console.log("width2:" + width2);
+  // console.log("width3:" + width3);
+  // console.log("width4:" + width4);
+  // console.log("endDate:" + endDate);
+  // console.log("updateDate:" + updateDate);
+  // console.log("timeline:" + timeline);
+  // console.log("startPoint:" + startPoint);
+  // console.log("trialEndPoint:" + trialEndPoint);
+  // console.log("billingPoint:" + billingPoint);
+  // console.log("updatePoint:" + updatePoint);
   return (
     <div className=" bottom-5">
       {/* create the event description */}
