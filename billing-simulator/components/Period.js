@@ -7,8 +7,10 @@ import differenceInCalendarYears from "date-fns/differenceInCalendarYears";
 import previousMonday from "date-fns/previousMonday";
 import addMonths from "date-fns/addMonths";
 import addDays from "date-fns/addDays";
+import getDate from "date-fns/getDate";
 import dynamic from "next/dynamic";
 import { useXarrow } from "react-xarrows";
+// import Xarrow from "react-xarrows";
 
 const Xarrow = dynamic(() => import("react-xarrows"), { ssr: false });
 
@@ -71,12 +73,25 @@ function Period({ parameter }) {
       ? 0
       : parameter.interval === "day"
       ? differenceInCalendarDays(parameter.billing_cycle_anchor, timelineStart)
-      : differenceInMonths(parameter.billing_cycle_anchor, timelineStart) * 30 +
+      : differenceInMonths(
+          getDate(parameter.billing_cycle_anchor) === 31
+            ? addDays(parameter.billing_cycle_anchor, -1)
+            : parameter.billing_cycle_anchor,
+          timelineStart
+        ) *
+          30 +
         differenceInDays(
-          parameter.billing_cycle_anchor,
+          getDate(parameter.billing_cycle_anchor) === 31
+            ? addDays(parameter.billing_cycle_anchor, -1)
+            : parameter.billing_cycle_anchor,
           addMonths(
             timelineStart,
-            differenceInMonths(parameter.billing_cycle_anchor, timelineStart)
+            differenceInMonths(
+              getDate(parameter.billing_cycle_anchor) === 31
+                ? addDays(parameter.billing_cycle_anchor, -1)
+                : parameter.billing_cycle_anchor,
+              timelineStart
+            )
           )
         );
   const trialEndPoint =
@@ -84,12 +99,25 @@ function Period({ parameter }) {
       ? 0
       : parameter.interval === "day"
       ? differenceInCalendarDays(parameter.trial_end, timelineStart)
-      : differenceInMonths(parameter.trial_end, timelineStart) * 30 +
+      : differenceInMonths(
+          getDate(parameter.trial_end) === 31
+            ? addDays(parameter.trial_end, -1)
+            : parameter.trial_end,
+          timelineStart
+        ) *
+          30 +
         differenceInDays(
-          parameter.trial_end,
+          getDate(parameter.trial_end) === 31
+            ? addDays(parameter.trial_end, -1)
+            : parameter.trial_end,
           addMonths(
             timelineStart,
-            differenceInMonths(parameter.trial_end, timelineStart)
+            differenceInMonths(
+              getDate(parameter.trial_end) === 31
+                ? addDays(parameter.trial_end, -1)
+                : parameter.trial_end,
+              timelineStart
+            )
           )
         );
 
@@ -193,11 +221,11 @@ function Period({ parameter }) {
               endAnchor={"left"}
               path="straight"
               color="#0A2540"
-              headSize="4"
-              tailSize="4"
+              headSize={4}
+              tailSize={4}
               start="line-create_date" //can be react ref
               end="line-trial_end" //or an id
-              strokeWidth={"2"}
+              strokeWidth={2}
               dashness
               showTail
               labels={<div className=" mt-20">Trial</div>}
@@ -224,15 +252,15 @@ function Period({ parameter }) {
                 endAnchor={"left"}
                 path="straight"
                 color="#0A2540"
-                headSize="4"
-                tailSize="4"
+                headSize={4}
+                tailSize={4}
                 start={
                   parameter.trial_end === null
                     ? "line-create_date"
                     : "line-trial_end"
                 } //can be react ref
                 end="line-billing-date" //or an id
-                strokeWidth={"2"}
+                strokeWidth={2}
                 dashness
                 showTail
                 labels={<div className=" mt-20 ">Proration</div>}
@@ -258,8 +286,8 @@ function Period({ parameter }) {
             endAnchor={"left"}
             path="straight"
             color="#0A2540"
-            headSize="4"
-            tailSize="4"
+            headSize={4}
+            tailSize={4}
             start={
               parameter.billing_cycle_anchor === null
                 ? parameter.trial_end === null
@@ -268,7 +296,7 @@ function Period({ parameter }) {
                 : "line-billing-date"
             }
             end="line-update-point"
-            strokeWidth={"2"}
+            strokeWidth={2}
             dashness
             showTail
             labels={<div className=" mt-20">Biling Cycle</div>}

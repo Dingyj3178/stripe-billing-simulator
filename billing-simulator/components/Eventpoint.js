@@ -7,18 +7,20 @@ import differenceInCalendarYears from "date-fns/differenceInCalendarYears";
 import previousMonday from "date-fns/previousMonday";
 import addMonths from "date-fns/addMonths";
 import addDays from "date-fns/addDays";
+import getDate from "date-fns/getDate";
 import dynamic from "next/dynamic";
 import { useXarrow } from "react-xarrows";
+// import Xarrow from "react-xarrows";
 
 const Xarrow = dynamic(() => import("react-xarrows"), { ssr: false });
 
 function Eventpoint({ parameter }) {
   const updateXarrow = useXarrow();
 
-  const [width, setWidth] = useState(0);
+  const [timelineWidth, setTimelineWidth] = useState(0);
   const ref = useRef(null);
   useEffect(() => {
-    setWidth(ref.current.clientWidth);
+    setTimelineWidth(ref.current.clientWidth);
   });
   useEffect(() => {
     updateXarrow();
@@ -72,12 +74,25 @@ function Eventpoint({ parameter }) {
       ? 0
       : parameter.interval === "day"
       ? differenceInCalendarDays(parameter.billing_cycle_anchor, timelineStart)
-      : differenceInMonths(parameter.billing_cycle_anchor, timelineStart) * 30 +
+      : differenceInMonths(
+          getDate(parameter.billing_cycle_anchor) === 31
+            ? addDays(parameter.billing_cycle_anchor, -1)
+            : parameter.billing_cycle_anchor,
+          timelineStart
+        ) *
+          30 +
         differenceInDays(
-          parameter.billing_cycle_anchor,
+          getDate(parameter.billing_cycle_anchor) === 31
+            ? addDays(parameter.billing_cycle_anchor, -1)
+            : parameter.billing_cycle_anchor,
           addMonths(
             timelineStart,
-            differenceInMonths(parameter.billing_cycle_anchor, timelineStart)
+            differenceInMonths(
+              getDate(parameter.billing_cycle_anchor) === 31
+                ? addDays(parameter.billing_cycle_anchor, -1)
+                : parameter.billing_cycle_anchor,
+              timelineStart
+            )
           )
         );
   const trialEndPoint =
@@ -85,12 +100,25 @@ function Eventpoint({ parameter }) {
       ? 0
       : parameter.interval === "day"
       ? differenceInCalendarDays(parameter.trial_end, timelineStart)
-      : differenceInMonths(parameter.trial_end, timelineStart) * 30 +
+      : differenceInMonths(
+          getDate(parameter.trial_end) === 31
+            ? addDays(parameter.trial_end, -1)
+            : parameter.trial_end,
+          timelineStart
+        ) *
+          30 +
         differenceInDays(
-          parameter.trial_end,
+          getDate(parameter.trial_end) === 31
+            ? addDays(parameter.trial_end, -1)
+            : parameter.trial_end,
           addMonths(
             timelineStart,
-            differenceInMonths(parameter.trial_end, timelineStart)
+            differenceInMonths(
+              getDate(parameter.trial_end) === 31
+                ? addDays(parameter.trial_end, -1)
+                : parameter.trial_end,
+              timelineStart
+            )
           )
         );
   // const trialEndPoint = differenceInDays(parameter.trial_end, timelineStart);
@@ -141,30 +169,46 @@ function Eventpoint({ parameter }) {
       365;
   }
 
-  const width1 = (width - 6) * (startPoint / timeline) - 48 + 6;
+  const width1 =
+    (timelineWidth - 6) * (startPoint / timeline) - 48 + 6 + 48 < 0
+      ? 0
+      : (timelineWidth - 6) * (startPoint / timeline) - 48 + 6 + 48;
   const width2 =
-    (width - 6) * (trialEndPoint / timeline) - 48 + 6 - 96 - width1 > 0
-      ? (width - 6) * (trialEndPoint / timeline) + 6 - 48 - 96 - width1
+    (timelineWidth - 6) * (trialEndPoint / timeline) -
+      48 +
+      6 -
+      96 -
+      width1 +
+      48 >
+    0
+      ? (timelineWidth - 6) * (trialEndPoint / timeline) +
+        6 -
+        48 -
+        96 -
+        width1 +
+        48
       : 0;
   const width3 =
-    (width - 6) * (billingPoint / timeline) -
+    (timelineWidth - 6) * (billingPoint / timeline) -
       48 +
       6 -
       96 -
       96 * (trialEndPoint === 0 ? 0 : 1) -
       width1 -
-      width2 >
+      width2 +
+      48 >
     0
-      ? (width - 6) * (billingPoint / timeline) -
+      ? (timelineWidth - 6) * (billingPoint / timeline) -
         48 +
         6 -
         96 -
         96 * (trialEndPoint === 0 ? 0 : 1) -
         width1 -
-        width2
+        width2 +
+        48
       : 0;
   const width4 =
-    (width - 6) * (updatePoint / timeline) -
+    (timelineWidth - 6) * (updatePoint / timeline) -
     48 +
     6 -
     96 -
@@ -172,34 +216,35 @@ function Eventpoint({ parameter }) {
     96 * (billingPoint === 0 ? 0 : 1) -
     width1 -
     width2 -
-    width3;
+    width3 +
+    48;
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
-  // console.log("width:" + width);
-  // console.log("width1:" + width1);
-  // console.log("width2:" + width2);
-  // console.log("width3:" + width3);
-  // console.log("width4:" + width4);
-  // console.log("endDate:" + endDate);
-  // console.log("updateDate:" + updateDate);
-  // console.log("timeline:" + timeline);
-  // console.log("startPoint:" + startPoint);
-  // console.log("trialEndPoint:" + trialEndPoint);
-  // console.log("billingPoint:" + billingPoint);
-  // console.log("updatePoint:" + updatePoint);
+  console.log("width:" + timelineWidth);
+  console.log("width1:" + width1);
+  console.log("width2:" + width2);
+  console.log("width3:" + width3);
+  console.log("width4:" + width4);
+  console.log("endDate:" + endDate);
+  console.log("updateDate:" + updateDate);
+  console.log("timeline:" + timeline);
+  console.log("startPoint:" + startPoint);
+  console.log("trialEndPoint:" + trialEndPoint);
+  console.log("billingPoint:" + billingPoint);
+  console.log("updatePoint:" + updatePoint);
   return (
     <div className=" bottom-5">
       {/* create the event description */}
-      <div className="pt-10 mx-12 relative">
+      <div className="pt-10 mx-0 relative">
         <div
           className="static inline-block h-2"
           style={{ width: width1 + "px" }}
         />
         <span
           id="d-create-date"
-          class=" inline-block px-3 py-0.5 rounded-full text-sm font-medium text-gray-50 bg-violet-500 mb-20 break-words w-24 text-center"
+          className=" inline-block px-3 py-0.5 rounded-full text-sm font-medium text-gray-50 bg-violet-500 mb-20 break-words w-24 text-center"
         >
           {parameter.billing_cycle_anchor !== null &&
           parameter.trial_end === null &&
@@ -217,7 +262,7 @@ function Eventpoint({ parameter }) {
             />
             <span
               id="d-trial_end"
-              class=" inline-block px-3 py-0.5 rounded-full text-sm font-medium text-gray-50 bg-violet-500 mb-20 break-words w-24 text-center"
+              className=" inline-block px-3 py-0.5 rounded-full text-sm font-medium text-gray-50 bg-violet-500 mb-20 break-words w-24 text-center"
             >
               Trial End Charge
             </span>
@@ -233,7 +278,7 @@ function Eventpoint({ parameter }) {
             />
             <span
               id="d-billing-date"
-              class=" inline-block px-3 py-0.5 rounded-full text-sm font-medium text-gray-50 bg-violet-500 mb-20 break-words w-24 text-center"
+              className=" inline-block px-3 py-0.5 rounded-full text-sm font-medium text-gray-50 bg-violet-500 mb-20 break-words w-24 text-center"
             >
               Charge
             </span>
@@ -247,7 +292,7 @@ function Eventpoint({ parameter }) {
         />
         <span
           id="d-update-point"
-          class=" inline-block px-3 py-0.5 rounded-full text-sm font-medium text-gray-50 bg-violet-500 mb-20 break-words w-24 text-center "
+          className=" inline-block px-3 py-0.5 rounded-full text-sm font-medium text-gray-50 bg-violet-500 mb-20 break-words w-24 text-center "
         >
           Charge for Update
         </span>
@@ -260,18 +305,18 @@ function Eventpoint({ parameter }) {
           className={classNames(
             "w-3 h-3 bg-[#80E9FF] border-[#7A73FF] border-2  rounded-full absolute -bottom-2 "
           )}
-          style={{ left: (width - 6) * (startPoint / timeline) + "px" }}
+          style={{ left: (timelineWidth - 6) * (startPoint / timeline) + "px" }}
         />
         <Xarrow
           startAnchor={"bottom"}
           endAnchor={"top"}
-          path="straight"
-          color="#0A2540"
+          color={"#0A2540"}
           headSize={4}
           start="d-create-date" //can be react ref
           end="p-create_date" //or an id
           strokeWidth={2}
         />
+
         {parameter.trial_end === null ? null : (
           <div>
             <div
@@ -280,18 +325,17 @@ function Eventpoint({ parameter }) {
                 "w-3 h-3 bg-[#80E9FF] border-[#7A73FF] border-2 rounded-full absolute -bottom-2 "
               )}
               style={{
-                left: (width - 6) * (trialEndPoint / timeline) + "px",
+                left: (timelineWidth - 6) * (trialEndPoint / timeline) + "px",
               }}
             />
             <Xarrow
               startAnchor={"bottom"}
               endAnchor={"top"}
-              path="straight"
               color="#0A2540"
               headSize={4}
               start="d-trial_end" //can be react ref
               end="p-trial_end" //or an id
-              strokeWidth={"2"}
+              strokeWidth={2}
             />
           </div>
         )}
@@ -303,18 +347,17 @@ function Eventpoint({ parameter }) {
                 "w-3 h-3 bg-[#80E9FF] border-[#7A73FF] border-2 rounded-full absolute -bottom-2 "
               )}
               style={{
-                left: (width - 6) * (billingPoint / timeline) + "px",
+                left: (timelineWidth - 6) * (billingPoint / timeline) + "px",
               }}
             />
             <Xarrow
               startAnchor={"bottom"}
               endAnchor={"top"}
-              path="straight"
               color="#0A2540"
               headSize={4}
               start="d-billing-date" //can be react ref
               end="p-billing-date" //or an id
-              strokeWidth={"2"}
+              strokeWidth={2}
             />
           </div>
         )}
@@ -325,18 +368,17 @@ function Eventpoint({ parameter }) {
               "w-3 h-3 bg-[#80E9FF] border-[#7A73FF] border-2 rounded-full absolute -bottom-2 "
             )}
             style={{
-              left: (width - 6) * (updatePoint / timeline) + "px",
+              left: (timelineWidth - 6) * (updatePoint / timeline) + "px",
             }}
           />
           <Xarrow
             startAnchor={"bottom"}
             endAnchor={"top"}
-            path="straight"
             color="#0A2540"
             headSize={4}
             start="d-update-point" //can be react ref
             end="p-update-point" //or an id
-            strokeWidth={"2"}
+            strokeWidth={2}
           />
         </div>
       </div>
