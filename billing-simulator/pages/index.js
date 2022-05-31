@@ -115,6 +115,18 @@ export default function Home() {
               return new Date(value) > new Date(this.parent.trial_end);
             } else return true;
           },
+        })
+        .test({
+          name: "billing_cycle_anchor",
+          exclusive: false,
+          params: {},
+          message: `billing_cycle_anchor cannot be later than next natural billing date ${calculateUpdate()} for plan`,
+          test: function (value) {
+            // You can access the price field with `this.parent`.
+            if (value !== null) {
+              return new Date(value) < calculateUpdate();
+            } else return true;
+          },
         }),
       trial_end: Yup.string()
         .nullable()
