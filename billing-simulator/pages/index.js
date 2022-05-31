@@ -208,7 +208,7 @@ export default function Home() {
         <Head>
           <title>Billing Simulator</title>
           <meta name="description" content="Stripe Billing Simulator " />
-          <link rel="icon" href="/Billing-Logo.svg" />
+          <link rel="icon" href="/billing-larma.svg" />
         </Head>
 
         <div className="lg:grid lg:grid-cols-3 lg:gap-6">
