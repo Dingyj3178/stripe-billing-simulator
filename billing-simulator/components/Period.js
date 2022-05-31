@@ -219,7 +219,7 @@ function Period({ parameter }) {
             <Xarrow
               startAnchor={"right"}
               endAnchor={"left"}
-              path="straight"
+              // path="straight"
               color="#0A2540"
               headSize={4}
               tailSize={4}
@@ -250,7 +250,7 @@ function Period({ parameter }) {
               <Xarrow
                 startAnchor={"right"}
                 endAnchor={"left"}
-                path="straight"
+                // path="straight"
                 color="#0A2540"
                 headSize={4}
                 tailSize={4}
@@ -284,7 +284,7 @@ function Period({ parameter }) {
           <Xarrow
             startAnchor={"right"}
             endAnchor={"left"}
-            path="straight"
+            // path="straight"
             color="#0A2540"
             headSize={4}
             tailSize={4}
