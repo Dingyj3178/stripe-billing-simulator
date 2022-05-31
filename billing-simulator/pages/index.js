@@ -124,7 +124,7 @@ export default function Home() {
           test: function (value) {
             // You can access the price field with `this.parent`.
             if (value !== null) {
-              return new Date(value) < calculateUpdate();
+              return new Date(value) <= calculateUpdate();
             } else return true;
           },
         }),
