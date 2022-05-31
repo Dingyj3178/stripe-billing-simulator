@@ -68,7 +68,12 @@ function Eventpoint({ parameter }) {
             differenceInMonths(updateDate, timelineStart)
           )
         );
-  const startPoint = differenceInDays(parameter.create_date, timelineStart);
+  const startPoint = differenceInDays(
+    getDate(parameter.create_date) === 31
+      ? addDays(parameter.create_date, -1)
+      : parameter.create_date,
+    timelineStart
+  );
   const billingPoint =
     parameter.billing_cycle_anchor === null
       ? 0
