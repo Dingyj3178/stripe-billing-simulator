@@ -161,6 +161,33 @@ export default function Home() {
       interval: Yup.string()
         .oneOf(["month", "year", "week", "day"])
         .required("Required"),
+      currency: Yup.string()
+        .oneOf(["usd", "aud", "jpy", "cny", "nzd", "eur", "sgd"])
+        .required("Required"),
+      unit_amount: Yup.number()
+        .required("Required")
+        .test({
+          name: "unit_amount",
+          exclusive: false,
+          params: {},
+          message:
+            "The amount is lower then the minimum amount for this currency",
+          test: function (value) {
+            if (this.parent.currency === "usd") {
+              return value >= 50;
+            } else if (this.parent.currency === "jpy") {
+              return value >= 50;
+            } else if (this.parent.currency === "sgd") {
+              return value >= 50;
+            } else if (this.parent.currency === "eur") {
+              return value >= 50;
+            } else if (this.parent.currency === "nzd") {
+              return value >= 50;
+            } else if (this.parent.currency === "aud") {
+              return value >= 50;
+            } else return true;
+          },
+        }),
       interval_count: Yup.number()
         .required("Required")
         .when("interval", {
@@ -412,6 +439,12 @@ export default function Home() {
                         onChange={formik.handleChange}
                       >
                         <option value={"usd"}>usd</option>
+                        <option value={"aud"}>aud</option>
+                        <option value={"nzd"}>nzd</option>
+                        <option value={"jpy"}>jpy</option>
+                        <option value={"cny"}>cny</option>
+                        <option value={"eur"}>eur</option>
+                        <option value={"sgd"}>sgd</option>
                       </select>
                     </div>
                     {formik.touched.currency && formik.errors.currency ? (
