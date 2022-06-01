@@ -10,6 +10,8 @@ import * as Yup from "yup";
 import * as htmlToImage from "html-to-image";
 import downloadjs from "downloadjs";
 
+import * as gtag from "../utils/gtag";
+
 import DatePicker from "react-datepicker";
 import setHours from "date-fns/setHours";
 import setMinutes from "date-fns/setMinutes";
@@ -208,6 +210,10 @@ export default function Home() {
         }),
     }),
     onSubmit: (values) => {
+      gtag.event({
+        action: "submit_form",
+        category: "Update",
+      });
       setParameter(values);
       // console.log(parameter);
     },
@@ -267,6 +273,10 @@ export default function Home() {
                         nextMonthButtonLabel=">"
                         previousMonthButtonLabel="<"
                         onChange={(date) => {
+                          gtag.event({
+                            action: "update_create_date",
+                            category: "Update",
+                          });
                           formik.setFieldValue("create_date", date);
                         }}
                         onBlur={formik.handleBlur}
@@ -303,6 +313,10 @@ export default function Home() {
                         previousMonthButtonLabel="<"
                         isClearable
                         onChange={(date) => {
+                          gtag.event({
+                            action: "update_billing_cycle_anchor",
+                            category: "Update",
+                          });
                           formik.setFieldValue("billing_cycle_anchor", date);
                         }}
                         onBlur={formik.handleBlur}
@@ -335,6 +349,10 @@ export default function Home() {
                         nextMonthButtonLabel=">"
                         previousMonthButtonLabel="<"
                         onChange={(date) => {
+                          gtag.event({
+                            action: "update_trial_end",
+                            category: "Update",
+                          });
                           formik.setFieldValue("trial_end", date);
                         }}
                         onBlur={formik.handleBlur}
