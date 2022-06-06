@@ -26,6 +26,8 @@ import dynamic from "next/dynamic";
 
 import Navbar from "../components/Navbar";
 import Timeline from "../components/Timeline";
+import InputLabel from "../components/InputLabel";
+
 // import Eventpoint from "../components/Eventpoint";
 // import Period from "../components/Period";
 
@@ -260,12 +262,14 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="sm:col-span-1">
-                    <label
-                      htmlFor="create_date"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      create_date
-                    </label>
+                    <InputLabel
+                      labelName={"create_date"}
+                      tooltipContents={
+                        <p className="before:contents-[''] before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99] prose prose-sm rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block w-52   absolute bottom-[22px] shadow-lg	 after:contents-[''] after:absolute after:-bottom-1 after:left-0.5 after:rotate-45 after:w-3 after:h-3 after:drop-shadow-lg after:shadow-black	 after:bg-white after:-z-10 ">
+                          Date and time the Subscription API was called.
+                        </p>
+                      }
+                    />
                     <div className="mt-1">
                       <DatePicker
                         id="create_date"
@@ -294,12 +298,29 @@ export default function Home() {
                   </div>
 
                   <div className="sm:col-span-1">
-                    <label
+                    {/* <label
                       htmlFor="billing_cycle_anchor"
                       className="block text-sm font-medium text-gray-700"
                     >
                       billing_cycle_anchor
-                    </label>
+                    </label> */}
+                    <InputLabel
+                      labelName={"billing_cycle_anchor"}
+                      tooltipContents={
+                        <p className="before:contents-[''] before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99] hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block w-52   absolute bottom-[22px] shadow-lg	 after:contents-[''] after:absolute after:-bottom-1 after:left-0.5 after:rotate-45 after:w-3 after:h-3 after:drop-shadow-lg after:shadow-black	 after:bg-white after:-z-10 ">
+                          A future timestamp to anchor the subscription’s
+                          billing cycle.{" "}
+                          <a
+                            href="https://stripe.com/docs/api/subscriptions/create#create_subscription-billing_cycle_anchor"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {" "}
+                            more
+                          </a>
+                        </p>
+                      }
+                    />
                     <div className="mt-1">
                       <DatePicker
                         id="billing_cycle_anchor"
@@ -333,12 +354,24 @@ export default function Home() {
                     ) : null}
                   </div>
                   <div className="sm:col-span-1">
-                    <label
-                      htmlFor="first-name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      trial_end
-                    </label>
+                    <InputLabel
+                      labelName={"trial_end"}
+                      tooltipContents={
+                        <p className="before:contents-[''] before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99] hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block w-52   absolute bottom-[22px] shadow-lg	 after:contents-[''] after:absolute after:-bottom-1 after:left-0.5 after:rotate-45 after:w-3 after:h-3 after:drop-shadow-lg after:shadow-black	 after:bg-white after:-z-10 ">
+                          Date and time representing the end of the trial period
+                          the customer will get before being charged for the
+                          first time.{" "}
+                          <a
+                            href="https://stripe.com/docs/api/subscriptions/create#create_subscription-trial_end"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {" "}
+                            more
+                          </a>
+                        </p>
+                      }
+                    />
                     <div className="mt-1">
                       <DatePicker
                         id="trial_end"
@@ -370,12 +403,23 @@ export default function Home() {
                   </div>
 
                   <div className="sm:col-span-1">
-                    <label
-                      htmlFor="first-name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      proration_behavior
-                    </label>
+                    <InputLabel
+                      labelName={"proration_behavior"}
+                      tooltipContents={
+                        <p className="before:contents-[''] before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99] hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block w-52   absolute bottom-[22px] shadow-lg	 after:contents-[''] after:absolute after:-bottom-1 after:left-0.5 after:rotate-45 after:w-3 after:h-3 after:drop-shadow-lg after:shadow-black	 after:bg-white after:-z-10 ">
+                          Determines how to handle prorations resulting from the
+                          billing_cycle_anchor.{" "}
+                          <a
+                            href="https://stripe.com/docs/api/subscriptions/create#create_subscription-proration_behavior"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {" "}
+                            more
+                          </a>
+                        </p>
+                      }
+                    />
                     <div className="mt-1">
                       <select
                         id="proration_behavior"
@@ -417,12 +461,22 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="sm:col-span-1">
-                    <label
-                      htmlFor="first-name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      unit_amount
-                    </label>
+                    <InputLabel
+                      labelName={"unit_amount"}
+                      tooltipContents={
+                        <p className="before:contents-[''] before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99] hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block w-52   absolute bottom-[22px] shadow-lg	 after:contents-[''] after:absolute after:-bottom-1 after:left-0.5 after:rotate-45 after:w-3 after:h-3 after:drop-shadow-lg after:shadow-black	 after:bg-white after:-z-10 ">
+                          A positive integer representing how much to charge.{" "}
+                          <a
+                            href="https://stripe.com/docs/api/prices/create#create_price-unit_amount"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {" "}
+                            more
+                          </a>
+                        </p>
+                      }
+                    />
                     <div className="mt-1">
                       <input
                         type="number"
@@ -441,12 +495,23 @@ export default function Home() {
                     ) : null}
                   </div>
                   <div className="sm:col-span-1">
-                    <label
-                      htmlFor="interval"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      currency
-                    </label>
+                    <InputLabel
+                      labelName={"currency"}
+                      tooltipContents={
+                        <p className="before:contents-[''] before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99] hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block w-52   absolute bottom-[22px] shadow-lg	 after:contents-[''] after:absolute after:-bottom-1 after:left-0.5 after:rotate-45 after:w-3 after:h-3 after:drop-shadow-lg after:shadow-black	 after:bg-white after:-z-10 ">
+                          Three-letter ISO currency code, in lowercase. Must be
+                          a supported currency.{" "}
+                          <a
+                            href="https://stripe.com/docs/api/prices/create#create_price-currency"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {" "}
+                            more
+                          </a>
+                        </p>
+                      }
+                    />
                     <div className="mt-1">
                       <select
                         id="currency"
@@ -472,12 +537,23 @@ export default function Home() {
                     ) : null}
                   </div>
                   <div className="sm:col-span-1">
-                    <label
-                      htmlFor="interval"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      interval
-                    </label>
+                    <InputLabel
+                      labelName={"interval"}
+                      tooltipContents={
+                        <p className="before:contents-[''] before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99] hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block w-52   absolute bottom-[22px] shadow-lg	 after:contents-[''] after:absolute after:-bottom-1 after:left-0.5 after:rotate-45 after:w-3 after:h-3 after:drop-shadow-lg after:shadow-black	 after:bg-white after:-z-10 ">
+                          Specifies billing frequency. Either day, week, month
+                          or year.{" "}
+                          <a
+                            href="https://stripe.com/docs/api/prices/create#create_price-recurring-interval"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {" "}
+                            more
+                          </a>
+                        </p>
+                      }
+                    />
                     <div className="mt-1">
                       <select
                         id="interval"
@@ -500,12 +576,25 @@ export default function Home() {
                     ) : null}
                   </div>
                   <div className="sm:col-span-1">
-                    <label
-                      htmlFor="interval_count"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      interval_count
-                    </label>
+                    <InputLabel
+                      labelName={"interval_count"}
+                      tooltipContents={
+                        <p className="before:contents-[''] before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99]  hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block w-52   absolute bottom-[22px] shadow-lg	 after:contents-[''] after:absolute after:-bottom-1 after:left-0.5 after:rotate-45 after:w-3 after:h-3 after:drop-shadow-lg after:shadow-black	 after:bg-white after:-z-10 ">
+                          The number of intervals between subscription billings.
+                          For example, interval=month and interval_count=3 bills
+                          every 3 months. Maximum of one year interval allowed
+                          (1 year, 12 months, or 52 weeks).{" "}
+                          <a
+                            href="https://stripe.com/docs/api/prices/create#create_price-recurring-interval_count"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {" "}
+                            more
+                          </a>
+                        </p>
+                      }
+                    />
                     <div className="mt-1">
                       <input
                         type="number"
