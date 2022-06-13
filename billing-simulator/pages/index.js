@@ -9,7 +9,7 @@ import {
   XIcon,
 } from "@heroicons/react/solid";
 
-import { Formik, Form, Field, FieldArray } from "formik";
+import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import SimulatorValidationSchema from "../components/SimulatorValidationSchema";
 
 import * as htmlToImage from "html-to-image";
@@ -949,6 +949,13 @@ export default function Home() {
                                     </div>
                                   </div>
                                 </div>
+                                {errors &&
+                                  errors.pricingTiers &&
+                                  typeof errors.pricingTiers === "string" && (
+                                    <div className="text-sm text-red-600 mt-1">
+                                      {errors.pricingTiers}
+                                    </div>
+                                  )}
                               </div>
                             </div>
                           ) : null

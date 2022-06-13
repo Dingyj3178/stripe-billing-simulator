@@ -1,6 +1,28 @@
 import * as Yup from "yup";
 import { calculateUpdate } from "../utils/timelineHelper";
 
+function arrayUptoValidate(array) {
+  let length = array.length - 1;
+  console.log(length);
+  array.pop();
+  console.log(array);
+  return array.every((value, index) => {
+    let nextIndex = index + 1;
+    console.log("nextIndex:" + nextIndex);
+    console.log("value.up_to:" + value.up_to);
+    if (nextIndex < length) {
+      console.log("array[nextIndex].up_to:" + array[nextIndex].up_to);
+      console.log(
+        "value.up_to < array[nextIndex].up_to:" + value.up_to <
+          array[nextIndex].up_to
+      );
+      return value.up_to * 1 < array[nextIndex].up_to * 1;
+    } else {
+      return true;
+    }
+  });
+}
+
 function SimulatorValidationSchema(parameter) {
   return Yup.object({
     create_date: Yup.string().required("Required").nullable(),
@@ -117,7 +139,28 @@ function SimulatorValidationSchema(parameter) {
         Yup.object().shape({
           up_to: Yup.string()
             .required("Required")
-            .min(1, "up_to must greater than 50 "),
+            .test({
+              name: "up_to",
+              exclusive: false,
+              params: {},
+              message: "up_to must greater than 0",
+              test: function (value) {
+                if (value !== "inf") {
+                  return value * 1 > 0;
+                } else return true;
+              },
+            })
+            .test({
+              name: "up_to",
+              exclusive: false,
+              params: {},
+              message: "keep up_to less then 100 for better experience",
+              test: function (value) {
+                if (value !== "inf") {
+                  return value * 1 <= 100;
+                } else return true;
+              },
+            }),
           unit_amount: Yup.number()
             .required("Required")
             .test({
@@ -147,7 +190,14 @@ function SimulatorValidationSchema(parameter) {
             }),
         })
       )
-      .min(2, "You must set at least 2 pricingTiers"),
+      .min(2, "You must set at least 2 pricingTiers")
+      .test({
+        name: "pricingTiers",
+        message: "each tier's up_to must greater then previous tier ",
+        test: function (value) {
+          return arrayUptoValidate(value);
+        },
+      }),
   });
 }
 
