@@ -1,6 +1,89 @@
 import addHours from "date-fns/addHours";
 import { calculateUpdate } from "./timelineHelper";
 
+function setPricingParameter(parameter) {
+  let parameters = [];
+  parameters.push(
+    {
+      key: "currency",
+      value: parameter.currency,
+      type: "text",
+    },
+
+    parameter.tiers_mode === ""
+      ? {
+          key: "unit_amount",
+          value: parameter.unit_amount,
+          type: "text",
+        }
+      : "",
+    {
+      key: "product_data[name]",
+      value:
+        `Billing Simulator ${parameter.interval} product` +
+        "_" +
+        new Date().toISOString().slice(0, 19),
+      type: "text",
+    },
+    {
+      key: "recurring[interval]",
+      value: parameter.interval,
+      type: "text",
+    },
+    {
+      key: "recurring[usage_type]",
+      value: "licensed",
+      type: "text",
+    },
+    {
+      key: "recurring[interval_count]",
+      value: parameter.interval_count,
+      type: "text",
+    },
+    parameter.tiers_mode !== ""
+      ? {
+          key: "tiers_mode",
+          value: parameter.tiers_mode,
+          type: "text",
+        }
+      : "",
+
+    parameter.tiers_mode !== ""
+      ? {
+          key: "billing_scheme",
+          value: "tiered",
+          type: "text",
+        }
+      : ""
+  );
+
+  if (parameter.tiers_mode !== "") {
+    return parameters.concat(
+      parameter.pricingTiers.flatMap((tier, index) => {
+        return [
+          {
+            key: `tiers[${index}][up_to]`,
+            value: tier.up_to,
+            type: "text",
+          },
+          {
+            key: `tiers[${index}][unit_amount]`,
+            value: tier.unit_amount,
+            type: "text",
+          },
+          {
+            key: `tiers[${index}][flat_amount]`,
+            value: tier.flat_amount,
+            type: "text",
+          },
+        ];
+      })
+    );
+  } else {
+    return parameters;
+  }
+}
+
 export const postmanExport = (parameter) => {
   return JSON.stringify(
     {
@@ -72,41 +155,7 @@ export const postmanExport = (parameter) => {
             },
             body: {
               mode: "urlencoded",
-              urlencoded: [
-                {
-                  key: "currency",
-                  value: parameter.currency,
-                  type: "text",
-                },
-                {
-                  key: "unit_amount",
-                  value: parameter.unit_amount,
-                  type: "text",
-                },
-                {
-                  key: "product_data[name]",
-                  value:
-                    `Billing Simulator ${parameter.interval} product` +
-                    "_" +
-                    new Date().toISOString().slice(0, 19),
-                  type: "text",
-                },
-                {
-                  key: "recurring[interval]",
-                  value: parameter.interval,
-                  type: "text",
-                },
-                {
-                  key: "recurring[usage_type]",
-                  value: "licensed",
-                  type: "text",
-                },
-                {
-                  key: "recurring[interval_count]",
-                  value: parameter.interval_count,
-                  type: "text",
-                },
-              ],
+              urlencoded: setPricingParameter(parameter),
             },
           },
           event: [

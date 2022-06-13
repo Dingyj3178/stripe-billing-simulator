@@ -4,11 +4,11 @@ import differenceInMonths from "date-fns/differenceInMonths";
 import differenceInCalendarMonths from "date-fns/differenceInCalendarMonths";
 import differenceInCalendarYears from "date-fns/differenceInCalendarYears";
 
-import previousMonday from "date-fns/previousMonday";
 import previousSunday from "date-fns/previousSunday";
 import isSunday from "date-fns/isSunday";
 
 import addMonths from "date-fns/addMonths";
+import addWeeks from "date-fns/addWeeks";
 import addDays from "date-fns/addDays";
 import getDate from "date-fns/getDate";
 
