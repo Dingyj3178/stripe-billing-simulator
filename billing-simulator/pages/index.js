@@ -9,7 +9,7 @@ import {
   XIcon,
 } from "@heroicons/react/solid";
 
-import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
+import { Formik, Form, Field, FieldArray } from "formik";
 import SimulatorValidationSchema from "../components/SimulatorValidationSchema";
 
 import * as htmlToImage from "html-to-image";
@@ -130,7 +130,7 @@ export default function Home() {
                   { up_to: "inf", unit_amount: 1000, flat_amount: 0 },
                 ],
               }}
-              validationSchema={SimulatorValidationSchema(parameter)}
+              validationSchema={SimulatorValidationSchema()}
               onSubmit={(values) => {
                 gtag.event({
                   action: "submit_form",

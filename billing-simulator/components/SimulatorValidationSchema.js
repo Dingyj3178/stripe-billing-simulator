@@ -3,19 +3,10 @@ import { calculateUpdate } from "../utils/timelineHelper";
 
 function arrayUptoValidate(array) {
   let length = array.length - 1;
-  console.log(length);
   array.pop();
-  console.log(array);
   return array.every((value, index) => {
     let nextIndex = index + 1;
-    console.log("nextIndex:" + nextIndex);
-    console.log("value.up_to:" + value.up_to);
     if (nextIndex < length) {
-      console.log("array[nextIndex].up_to:" + array[nextIndex].up_to);
-      console.log(
-        "value.up_to < array[nextIndex].up_to:" + value.up_to <
-          array[nextIndex].up_to
-      );
       return value.up_to * 1 < array[nextIndex].up_to * 1;
     } else {
       return true;
@@ -23,7 +14,7 @@ function arrayUptoValidate(array) {
   });
 }
 
-function SimulatorValidationSchema(parameter) {
+function SimulatorValidationSchema() {
   return Yup.object({
     create_date: Yup.string().required("Required").nullable(),
     billing_cycle_anchor: Yup.string()
@@ -44,13 +35,19 @@ function SimulatorValidationSchema(parameter) {
         name: "billing_cycle_anchor",
         exclusive: false,
         params: {},
-        message: `billing_cycle_anchor cannot be later than next natural billing date ${calculateUpdate(
-          parameter
-        )} for plan`,
+        message: `billing_cycle_anchor cannot be later than next natural billing date for plan`,
         test: function (value) {
           // You can access the price field with `this.parent`.
           if (value !== null) {
-            return new Date(value) <= calculateUpdate(parameter);
+            return (
+              new Date(value) <=
+              calculateUpdate(
+                this.parent.trial_end,
+                this.parent.create_date,
+                this.parent.interval,
+                this.parent.interval_count
+              )
+            );
           } else return true;
         },
       }),

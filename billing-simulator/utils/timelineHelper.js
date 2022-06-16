@@ -237,20 +237,20 @@ export const widthCalculator = (eventPoint, windowWidth) => {
   };
 };
 
-export const calculateUpdate = (parameter) => {
-  const endDate =
-    parameter.billing_cycle_anchor !== null
-      ? parameter.billing_cycle_anchor
-      : parameter.trial_end !== null
-      ? parameter.trial_end
-      : parameter.create_date;
+export const calculateUpdate = (
+  trial_end,
+  create_date,
+  interval,
+  interval_count
+) => {
+  const endDate = trial_end !== null ? trial_end : create_date;
   const updateDate =
-    parameter.interval === "year"
-      ? addYears(new Date(endDate), parameter.interval_count * 1)
-      : parameter.interval === "month"
-      ? addMonths(new Date(endDate), parameter.interval_count * 1)
-      : parameter.interval === "week"
-      ? addWeeks(new Date(endDate), parameter.interval_count * 1)
-      : addDays(new Date(endDate), parameter.interval_count * 1);
+    interval === "year"
+      ? addYears(new Date(endDate), interval_count * 1)
+      : interval === "month"
+      ? addMonths(new Date(endDate), interval_count * 1)
+      : interval === "week"
+      ? addWeeks(new Date(endDate), interval_count * 1)
+      : addDays(new Date(endDate), interval_count * 1);
   return updateDate;
 };
