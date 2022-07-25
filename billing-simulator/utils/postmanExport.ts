@@ -136,7 +136,7 @@ export const postmanExport = (parameter: Parameters) => {
               urlencoded: [
                 {
                   key: "frozen_time",
-                  value: Math.floor(parameter.create_date.getTime() / 1000),
+                  value: Math.floor(parameter.create_date!.getTime() / 1000),
                   type: "text",
                 },
               ],
@@ -430,8 +430,8 @@ export const postmanExport = (parameter: Parameters) => {
                   value: Math.floor(
                     addHours(
                       calculateUpdate(
-                        parameter.trial_end,
-                        parameter.create_date,
+                        parameter.trial_end as Date,
+                        parameter.create_date as Date,
                         parameter.interval,
                         parameter.interval_count
                       ),

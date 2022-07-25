@@ -27,55 +27,55 @@ export const eventPointCalculator = (parameter: Parameters) => {
 
   const updateDate =
     parameter.interval === "year"
-      ? addDays(new Date(endDate), parameter.interval_count * 365)
+      ? addDays(new Date(endDate!), parameter.interval_count * 365)
       : parameter.interval === "month"
-      ? addMonths(new Date(endDate), parameter.interval_count * 1)
+      ? addMonths(new Date(endDate!), parameter.interval_count * 1)
       : parameter.interval === "week"
-      ? addDays(new Date(endDate), parameter.interval_count * 7)
-      : addDays(new Date(endDate), parameter.interval_count);
+      ? addDays(new Date(endDate!), parameter.interval_count * 7)
+      : addDays(new Date(endDate!), parameter.interval_count);
   const timelineStart =
     parameter.interval === "day"
       ? parameter.create_date
       : parameter.interval === "week"
-      ? isSunday(parameter.create_date)
-        ? parameter.create_date
-        : previousSunday(parameter.create_date)
+      ? isSunday(parameter.create_date!)
+        ? parameter.create_date!
+        : previousSunday(parameter.create_date!)
       : parameter.interval === "year"
-      ? new Date(parameter.create_date.getFullYear(), 1, 1)
+      ? new Date(parameter.create_date!.getFullYear(), 1, 1)
       : new Date(
-          parameter.create_date.getFullYear(),
-          parameter.create_date.getMonth(),
+          parameter.create_date!.getFullYear(),
+          parameter.create_date!.getMonth(),
           1
         );
 
   // const updatePoint = differenceInDays(updateDate, timelineStart);
   const updatePoint =
     parameter.interval === "day"
-      ? differenceInCalendarDays(updateDate, timelineStart)
-      : differenceInMonths(updateDate, timelineStart) * 30 +
+      ? differenceInCalendarDays(updateDate, timelineStart!)
+      : differenceInMonths(updateDate, timelineStart!) * 30 +
         differenceInDays(
           updateDate,
           addMonths(
-            timelineStart,
-            differenceInMonths(updateDate, timelineStart)
+            timelineStart!,
+            differenceInMonths(updateDate, timelineStart!)
           )
         );
   const startPoint = differenceInDays(
-    getDate(parameter.create_date) === 31
-      ? addDays(parameter.create_date, -1)
-      : parameter.create_date,
-    timelineStart
+    getDate(parameter.create_date!) === 31
+      ? addDays(parameter.create_date!, -1)
+      : parameter.create_date!,
+    timelineStart!
   );
   const billingPoint =
     parameter.billing_cycle_anchor === null
       ? 0
       : parameter.interval === "day"
-      ? differenceInCalendarDays(parameter.billing_cycle_anchor, timelineStart)
+      ? differenceInCalendarDays(parameter.billing_cycle_anchor, timelineStart!)
       : differenceInMonths(
           getDate(parameter.billing_cycle_anchor) === 31
             ? addDays(parameter.billing_cycle_anchor, -1)
             : parameter.billing_cycle_anchor,
-          timelineStart
+          timelineStart!
         ) *
           30 +
         differenceInDays(
@@ -83,12 +83,12 @@ export const eventPointCalculator = (parameter: Parameters) => {
             ? addDays(parameter.billing_cycle_anchor, -1)
             : parameter.billing_cycle_anchor,
           addMonths(
-            timelineStart,
+            timelineStart!,
             differenceInMonths(
               getDate(parameter.billing_cycle_anchor) === 31
                 ? addDays(parameter.billing_cycle_anchor, -1)
                 : parameter.billing_cycle_anchor,
-              timelineStart
+              timelineStart!
             )
           )
         );
@@ -96,12 +96,12 @@ export const eventPointCalculator = (parameter: Parameters) => {
     parameter.trial_end === null
       ? 0
       : parameter.interval === "day"
-      ? differenceInCalendarDays(parameter.trial_end, timelineStart)
+      ? differenceInCalendarDays(parameter.trial_end, timelineStart!)
       : differenceInMonths(
           getDate(parameter.trial_end) === 31
             ? addDays(parameter.trial_end, -1)
             : parameter.trial_end,
-          timelineStart
+          timelineStart!
         ) *
           30 +
         differenceInDays(
@@ -109,12 +109,12 @@ export const eventPointCalculator = (parameter: Parameters) => {
             ? addDays(parameter.trial_end, -1)
             : parameter.trial_end,
           addMonths(
-            timelineStart,
+            timelineStart!,
             differenceInMonths(
               getDate(parameter.trial_end) === 31
                 ? addDays(parameter.trial_end, -1)
                 : parameter.trial_end,
-              timelineStart
+              timelineStart!
             )
           )
         );
@@ -125,41 +125,41 @@ export const eventPointCalculator = (parameter: Parameters) => {
       timeline =
         differenceInCalendarMonths(
           new Date(
-            endDate.getFullYear(),
-            endDate.getMonth() + parameter.interval_count * 1 + 2,
+            endDate!.getFullYear(),
+            endDate!.getMonth() + parameter.interval_count * 1 + 2,
             1
           ),
-          endDate
+          endDate!
         ) *
           30 +
-        differenceInCalendarMonths(endDate, timelineStart) * 30;
+        differenceInCalendarMonths(endDate!, timelineStart!) * 30;
 
       break;
     case "year":
       timeline =
         differenceInCalendarYears(
           new Date(
-            endDate.getFullYear() + parameter.interval_count * 1 + 1,
-            endDate.getMonth(),
+            endDate!.getFullYear() + parameter.interval_count * 1 + 1,
+            endDate!.getMonth(),
             1
           ),
-          timelineStart
+          timelineStart!
         ) * 365;
       break;
     case "week":
       timeline = differenceInCalendarDays(
-        new Date(endDate).setDate(
-          endDate.getDate() + parameter.interval_count * 7 + 14
+        new Date(endDate!).setDate(
+          endDate!.getDate() + parameter.interval_count * 7 + 14
         ),
-        parameter.create_date
+        parameter.create_date!
       );
       break;
     case "day":
       timeline = differenceInCalendarDays(
-        new Date(endDate).setDate(
-          endDate.getDate() + parameter.interval_count * 1 + 1
+        new Date(endDate!).setDate(
+          endDate!.getDate() + parameter.interval_count * 1 + 1
         ),
-        parameter.create_date
+        parameter.create_date!
       );
       break;
     default:
