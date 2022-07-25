@@ -1,7 +1,7 @@
 import React from "react";
 import { InformationCircleIcon } from "@heroicons/react/solid";
 
-function InputLabel({ labelName, tooltipContents }) {
+function InputLabel({ labelName, tooltipContents }: any) {
   return (
     <div className="flex items-center ">
       <label

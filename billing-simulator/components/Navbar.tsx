@@ -7,7 +7,7 @@ import {
   QuestionMarkCircleIcon,
 } from "@heroicons/react/outline";
 
-function classNames(...classes) {
+function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 

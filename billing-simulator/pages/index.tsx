@@ -29,6 +29,9 @@ import Navbar from "../components/Navbar";
 import Timeline from "../components/Timeline";
 import InputLabel from "../components/InputLabel";
 import PricingChart from "../components/PricingChart";
+import TiersTable from "../components/TiersTable";
+
+import { Parameters } from "../typings";
 
 const Eventpoint = dynamic(() => import("../components/Eventpoint"), {
   ssr: false,
@@ -38,7 +41,23 @@ const Period = dynamic(() => import("../components/Period"), {
 });
 
 export default function Home() {
-  const textAreaRef = useRef(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const initValues: Parameters = {
+    create_date: setHours(setMinutes(setSeconds(new Date(), 0), 0), 0),
+    interval: "month",
+    interval_count: 1,
+    billing_cycle_anchor: null,
+    trial_end: null,
+    proration_behavior: "none",
+    unit_amount: 1000,
+    currency: "usd",
+    usage_type: "licensed",
+    tiers_mode: "",
+    pricingTiers: [
+      { up_to: 1, unit_amount: 1000, flat_amount: 0 },
+      { up_to: "inf", unit_amount: 1000, flat_amount: 0 },
+    ],
+  };
 
   // const router = useRouter();
   // const { intial_create_date, intial_interval_count } = router.query;
@@ -49,7 +68,7 @@ export default function Home() {
   //   { id: 1, up_to: 1, unit_amount: 1000, flat_amount: 0 },
   // ]);
   let [, , resetIsShowing] = useTimeoutFn(() => setIsShowing(false), 1000);
-  const [parameter, setParameter] = useState({
+  const [parameter, setParameter] = useState<Parameters>({
     create_date: setHours(setMinutes(setSeconds(new Date(), 0), 0), 0),
     interval: "month",
     interval_count: 1,
@@ -67,13 +86,13 @@ export default function Home() {
   });
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(textAreaRef.current.value);
+    navigator.clipboard.writeText(textAreaRef.current!.value);
     setIsShowing(true);
     resetIsShowing();
   };
   const downloadBillingSchedule = () => {
     htmlToImage
-      .toPng(document.getElementById("billingSchedule"), {
+      .toPng(document.getElementById("billingSchedule")!, {
         backgroundColor: "#f6f9fb",
         quality: 1,
         cacheBust: true,
@@ -111,30 +130,14 @@ export default function Home() {
         <div className="lg:grid lg:grid-cols-3 lg:gap-6">
           <div className="md:col-span-1">
             <Formik
-              initialValues={{
-                create_date: setHours(
-                  setMinutes(setSeconds(new Date(), 0), 0),
-                  0
-                ),
-                interval: "month",
-                interval_count: 1,
-                billing_cycle_anchor: null,
-                trial_end: null,
-                proration_behavior: "none",
-                unit_amount: 1000,
-                currency: "usd",
-                usage_type: "licensed",
-                tiers_mode: "",
-                pricingTiers: [
-                  { up_to: 1, unit_amount: 1000, flat_amount: 0 },
-                  { up_to: "inf", unit_amount: 1000, flat_amount: 0 },
-                ],
-              }}
+              initialValues={initValues}
               validationSchema={SimulatorValidationSchema()}
               onSubmit={(values) => {
                 gtag.event({
                   action: "submit_form",
                   category: "Update",
+                  label: "submit",
+                  value: "submit",
                 });
                 setParameter(values);
                 // console.log(parameter);
@@ -177,11 +180,13 @@ export default function Home() {
                               gtag.event({
                                 action: "update_create_date",
                                 category: "Update",
+                                label: "Update",
+                                value: "Update",
                               });
                               setFieldValue("create_date", date);
                             }}
                             onBlur={handleBlur}
-                            value={values.create_date}
+                            value={values.create_date as unknown as string}
                             autoComplete="off"
                             showTimeInput
                             dateFormat="MM/dd/yyyy hh:mm:ss"
@@ -189,7 +194,7 @@ export default function Home() {
                         </div>
                         {errors.create_date ? (
                           <div className="text-sm text-red-600">
-                            {errors.create_date}
+                            {errors.create_date as string}
                           </div>
                         ) : null}
                       </div>
@@ -234,11 +239,17 @@ export default function Home() {
                               gtag.event({
                                 action: "update_billing_cycle_anchor",
                                 category: "Update",
+                                label: "Update",
+                                value: "Update",
                               });
                               setFieldValue("billing_cycle_anchor", date);
                             }}
                             onBlur={handleBlur}
-                            value={values.billing_cycle_anchor}
+                            value={
+                              values.billing_cycle_anchor
+                                ? (values.billing_cycle_anchor as unknown as string)
+                                : ""
+                            }
                             autoComplete="off"
                             showTimeInput
                             dateFormat="MM/dd/yyyy hh:mm:ss"
@@ -282,11 +293,13 @@ export default function Home() {
                               gtag.event({
                                 action: "update_trial_end",
                                 category: "Update",
+                                label: "Update",
+                                value: "Update",
                               });
                               setFieldValue("trial_end", date);
                             }}
                             onBlur={handleBlur}
-                            value={values.trial_end}
+                            value={values.trial_end as unknown as string}
                             autoComplete="off"
                             showTimeInput
                             dateFormat="MM/dd/yyyy hh:mm:ss"
@@ -608,7 +621,12 @@ export default function Home() {
                           </div>
                         ) : null}
                       </div>
-                      <FieldArray
+                      <TiersTable
+                        values={values}
+                        errors={errors}
+                        touched={touched}
+                      />
+                      {/* <FieldArray
                         name="pricingTiers"
                         render={(arrayHelpers) =>
                           values.pricingTiers &&
@@ -960,7 +978,7 @@ export default function Home() {
                             </div>
                           ) : null
                         }
-                      />
+                      /> */}
                     </div>
                   </div>
                   <div className="pt-5">
@@ -1048,11 +1066,3 @@ export default function Home() {
     </>
   );
 }
-
-// export async function getServerSideProps({ query }) {
-//   // console.log(query); // `{ id: 'foo' }`
-//   //...
-//   return {
-//     props: { query }, // will be passed to the page component as props
-//   };
-// }

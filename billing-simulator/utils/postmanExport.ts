@@ -1,8 +1,11 @@
 import addHours from "date-fns/addHours";
 import { calculateUpdate } from "./timelineHelper";
+import { Parameters } from "../typings";
 
-function setPricingParameter(parameter) {
-  let parameters = [];
+function setPricingParameter(parameter: Parameters) {
+  let parameters: [{ key: string; value: string; type: string } | string] = [
+    { key: "", value: "", type: "" },
+  ];
   parameters.push(
     {
       key: "currency",
@@ -13,7 +16,7 @@ function setPricingParameter(parameter) {
     parameter.tiers_mode === ""
       ? {
           key: "unit_amount",
-          value: parameter.unit_amount,
+          value: parameter.unit_amount.toString(),
           type: "text",
         }
       : "",
@@ -37,7 +40,7 @@ function setPricingParameter(parameter) {
     },
     {
       key: "recurring[interval_count]",
-      value: parameter.interval_count,
+      value: parameter.interval_count.toString(),
       type: "text",
     },
     parameter.tiers_mode !== ""
@@ -63,17 +66,17 @@ function setPricingParameter(parameter) {
         return [
           {
             key: `tiers[${index}][up_to]`,
-            value: tier.up_to,
+            value: tier.up_to.toString(),
             type: "text",
           },
           {
             key: `tiers[${index}][unit_amount]`,
-            value: tier.unit_amount,
+            value: tier.unit_amount.toString(),
             type: "text",
           },
           {
             key: `tiers[${index}][flat_amount]`,
-            value: tier.flat_amount,
+            value: tier.flat_amount.toString(),
             type: "text",
           },
         ];
@@ -84,7 +87,7 @@ function setPricingParameter(parameter) {
   }
 }
 
-export const postmanExport = (parameter) => {
+export const postmanExport = (parameter: Parameters) => {
   return JSON.stringify(
     {
       info: {
@@ -346,8 +349,10 @@ export const postmanExport = (parameter) => {
                     {
                       key: "frozen_time",
                       value: Math.floor(
-                        addHours(parameter.billing_cycle_anchor.getTime(), 1) /
-                          1000
+                        addHours(
+                          parameter.billing_cycle_anchor.getTime(),
+                          1
+                        ).getTime() / 1000
                       ),
                       type: "text",
                     },
@@ -423,7 +428,15 @@ export const postmanExport = (parameter) => {
                 {
                   key: "frozen_time",
                   value: Math.floor(
-                    addHours(calculateUpdate(parameter), 1) / 1000
+                    addHours(
+                      calculateUpdate(
+                        parameter.trial_end,
+                        parameter.create_date,
+                        parameter.interval,
+                        parameter.interval_count
+                      ),
+                      1
+                    ).getTime() / 1000
                   ),
                   type: "text",
                 },

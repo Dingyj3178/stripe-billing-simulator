@@ -2,7 +2,9 @@ import "../styles/globals.css";
 import GoogleAnalytics from "../components/GoogleAnalytics";
 import usePageView from "../hooks/usePageView";
 
-function MyApp({ Component, pageProps }) {
+import type { AppProps } from "next/app";
+
+function MyApp({ Component, pageProps }: AppProps) {
   usePageView();
   return (
     <>

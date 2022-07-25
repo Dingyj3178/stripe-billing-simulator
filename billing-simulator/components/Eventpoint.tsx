@@ -4,16 +4,17 @@ import dynamic from "next/dynamic";
 import { useXarrow } from "react-xarrows";
 
 import { eventPointCalculator, widthCalculator } from "../utils/timelineHelper";
+import { Parameters } from "../typings";
 
 const Xarrow = dynamic(() => import("react-xarrows"), { ssr: false });
 
-function Eventpoint({ parameter }) {
+function Eventpoint({ parameter }: { parameter: Parameters }) {
   const updateXarrow = useXarrow();
 
   const [timelineWidth, setTimelineWidth] = useState(0);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    setTimelineWidth(ref.current.clientWidth);
+    setTimelineWidth(ref.current!.clientWidth);
   });
   useEffect(() => {
     updateXarrow();
@@ -31,7 +32,7 @@ function Eventpoint({ parameter }) {
   const width3 = widthResult.width3;
   const width4 = widthResult.width4;
 
-  function classNames(...classes) {
+  function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
   }
   // console.log("width:" + timelineWidth);

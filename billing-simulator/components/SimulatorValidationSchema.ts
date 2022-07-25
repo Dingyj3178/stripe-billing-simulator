@@ -1,13 +1,14 @@
 import * as Yup from "yup";
 import { calculateUpdate } from "../utils/timelineHelper";
+import { pricingTiers } from "../typings";
 
-function arrayUptoValidate(array) {
+function arrayUptoValidate(array: pricingTiers[]) {
   let length = array.length - 1;
   array.pop();
   return array.every((value, index) => {
     let nextIndex = index + 1;
     if (nextIndex < length) {
-      return value.up_to * 1 < array[nextIndex].up_to * 1;
+      return Number(value.up_to) * 1 < Number(array[nextIndex].up_to) * 1;
     } else {
       return true;
     }
@@ -27,7 +28,7 @@ function SimulatorValidationSchema() {
         test: function (value) {
           // You can access the price field with `this.parent`.
           if (this.parent.trial_end !== null && value !== null) {
-            return new Date(value) > new Date(this.parent.trial_end);
+            return new Date(value!) > new Date(this.parent.trial_end);
           } else return true;
         },
       })
@@ -40,7 +41,7 @@ function SimulatorValidationSchema() {
           // You can access the price field with `this.parent`.
           if (value !== null) {
             return (
-              new Date(value) <=
+              new Date(value!) <=
               calculateUpdate(
                 this.parent.trial_end,
                 this.parent.create_date,
@@ -60,7 +61,7 @@ function SimulatorValidationSchema() {
         message: "trial_end must be greater than create_date",
         test: function (value) {
           if (value !== null) {
-            return new Date(value) > new Date(this.parent.create_date);
+            return new Date(value!) > new Date(this.parent.create_date);
           } else return true;
         },
       }),
@@ -97,17 +98,17 @@ function SimulatorValidationSchema() {
           "The amount is lower then the minimum amount for this currency",
         test: function (value) {
           if (this.parent.currency === "usd") {
-            return value >= 50;
+            return value! >= 50;
           } else if (this.parent.currency === "jpy") {
-            return value >= 50;
+            return value! >= 50;
           } else if (this.parent.currency === "sgd") {
-            return value >= 50;
+            return value! >= 50;
           } else if (this.parent.currency === "eur") {
-            return value >= 50;
+            return value! >= 50;
           } else if (this.parent.currency === "nzd") {
-            return value >= 50;
+            return value! >= 50;
           } else if (this.parent.currency === "aud") {
-            return value >= 50;
+            return value! >= 50;
           } else return true;
         },
       }),
@@ -143,7 +144,7 @@ function SimulatorValidationSchema() {
               message: "up_to must greater than 0",
               test: function (value) {
                 if (value !== "inf") {
-                  return value * 1 > 0;
+                  return Number(value!) * 1 > 0;
                 } else return true;
               },
             })
@@ -154,7 +155,7 @@ function SimulatorValidationSchema() {
               message: "keep up_to less then 100 for better experience",
               test: function (value) {
                 if (value !== "inf") {
-                  return value * 1 <= 100;
+                  return Number(value!) * 1 <= 100;
                 } else return true;
               },
             }),
@@ -167,7 +168,7 @@ function SimulatorValidationSchema() {
               message: "unit_amount must greater than 50",
               test: function (value) {
                 if (value !== 0) {
-                  return value >= 50;
+                  return value! >= 50;
                 } else return true;
               },
             }),
@@ -181,7 +182,7 @@ function SimulatorValidationSchema() {
               message: "flat_amount must greater than 50",
               test: function (value) {
                 if (value !== 0) {
-                  return value >= 50;
+                  return value! >= 50;
                 } else return true;
               },
             }),
@@ -192,7 +193,7 @@ function SimulatorValidationSchema() {
         name: "pricingTiers",
         message: "each tier's up_to must greater then previous tier ",
         test: function (value) {
-          return arrayUptoValidate(value);
+          return arrayUptoValidate(value as pricingTiers[]);
         },
       }),
   });

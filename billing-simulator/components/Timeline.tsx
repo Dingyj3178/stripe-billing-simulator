@@ -3,12 +3,13 @@ import eachMonthOfInterval from "date-fns/eachMonthOfInterval";
 import eachYearOfInterval from "date-fns/eachYearOfInterval";
 import eachWeekOfInterval from "date-fns/eachWeekOfInterval";
 import eachDayOfInterval from "date-fns/eachDayOfInterval";
+import { Parameters } from "../typings";
 
-function Timeline({ parameter }) {
-  let timelineArray = [];
+function Timeline({ parameter }: { parameter: Parameters }) {
+  let timelineArray: Date[] = [];
   const timelineStart = new Date(
-    parameter.create_date.getFullYear(),
-    parameter.create_date.getMonth(),
+    parameter.create_date!.getFullYear(),
+    parameter.create_date!.getMonth(),
     1
   );
   let endDate =
@@ -24,8 +25,8 @@ function Timeline({ parameter }) {
       timelineArray = eachMonthOfInterval({
         start: timelineStart,
         end: new Date(
-          endDate.getFullYear(),
-          endDate.getMonth() + parameter.interval_count * 1 + 2,
+          endDate!.getFullYear(),
+          endDate!.getMonth() + parameter.interval_count * 1 + 2,
           1
         ),
       });
@@ -34,25 +35,25 @@ function Timeline({ parameter }) {
       timelineArray = eachYearOfInterval({
         start: timelineStart,
         end: new Date(
-          endDate.getFullYear() + parameter.interval_count * 1 + 1,
-          endDate.getMonth(),
+          endDate!.getFullYear() + parameter.interval_count * 1 + 1,
+          endDate!.getMonth(),
           1
         ),
       });
       break;
     case "week":
       timelineArray = eachWeekOfInterval({
-        start: parameter.create_date,
-        end: new Date(endDate).setDate(
-          endDate.getDate() + parameter.interval_count * 7 + 14
+        start: parameter.create_date!,
+        end: new Date(endDate!).setDate(
+          endDate!.getDate() + parameter.interval_count * 7 + 14
         ),
       });
       break;
     case "day":
       timelineArray = eachDayOfInterval({
-        start: parameter.create_date,
-        end: new Date(endDate).setDate(
-          endDate.getDate() + parameter.interval_count * 1 + 1
+        start: parameter.create_date!,
+        end: new Date(endDate!).setDate(
+          endDate!.getDate() + parameter.interval_count * 1 + 1
         ),
       });
       break;
@@ -65,7 +66,7 @@ function Timeline({ parameter }) {
       {timelineArray.map((id) => {
         return (
           <div
-            key={id}
+            key={id.toString()}
             className=" w-3 h-3  bg-yellow-500 rounded-full relative"
           >
             <div className=" absolute -translate-x-1/3 left-1/3 top-7 w-20 text-center z-10">

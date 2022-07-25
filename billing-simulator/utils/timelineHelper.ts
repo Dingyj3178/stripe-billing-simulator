@@ -7,13 +7,16 @@ import differenceInCalendarYears from "date-fns/differenceInCalendarYears";
 import previousSunday from "date-fns/previousSunday";
 import isSunday from "date-fns/isSunday";
 
+import addYears from "date-fns/addYears";
 import addMonths from "date-fns/addMonths";
 import addWeeks from "date-fns/addWeeks";
 import addDays from "date-fns/addDays";
 import getDate from "date-fns/getDate";
 
-export const eventPointCalculator = (parameter) => {
-  let timeline = "";
+import { Parameters, EventResult } from "../typings";
+
+export const eventPointCalculator = (parameter: Parameters) => {
+  let timeline: number = 0;
 
   const endDate =
     parameter.billing_cycle_anchor !== null
@@ -172,7 +175,10 @@ export const eventPointCalculator = (parameter) => {
   };
 };
 
-export const widthCalculator = (eventPoint, windowWidth) => {
+export const widthCalculator = (
+  eventPoint: EventResult,
+  windowWidth: number
+) => {
   const width1 =
     (windowWidth - 6) * (eventPoint.startPoint / eventPoint.timeline) -
       48 +
@@ -238,10 +244,10 @@ export const widthCalculator = (eventPoint, windowWidth) => {
 };
 
 export const calculateUpdate = (
-  trial_end,
-  create_date,
-  interval,
-  interval_count
+  trial_end: Date,
+  create_date: Date,
+  interval: string,
+  interval_count: number
 ) => {
   const endDate = trial_end !== null ? trial_end : create_date;
   const updateDate =

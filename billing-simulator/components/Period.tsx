@@ -13,17 +13,19 @@ import { useXarrow } from "react-xarrows";
 
 import { eventPointCalculator, widthCalculator } from "../utils/timelineHelper";
 
+import { Parameters } from "../typings";
+
 // import Xarrow from "react-xarrows";
 
 const Xarrow = dynamic(() => import("react-xarrows"), { ssr: false });
 
-function Period({ parameter }) {
+function Period({ parameter }: { parameter: Parameters }) {
   const updateXarrow = useXarrow();
 
   const [width, setWidth] = useState(0);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    setWidth(ref.current.clientWidth);
+    setWidth(ref.current!.clientWidth);
   });
   useEffect(() => {
     updateXarrow();
@@ -36,7 +38,7 @@ function Period({ parameter }) {
   const trialEndPoint = result.trialEndPoint;
   const billingPoint = result.billingPoint;
 
-  function classNames(...classes) {
+  function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
   }
   // console.log("width:" + width);
