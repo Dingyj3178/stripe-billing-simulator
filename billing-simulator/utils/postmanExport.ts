@@ -432,6 +432,7 @@ export const postmanExport = (parameter: Parameters) => {
                   value: Math.floor(
                     addHours(
                       calculateUpdate(
+                        parameter.billing_cycle_anchor as Date,
                         parameter.trial_end as Date,
                         parameter.create_date as Date,
                         parameter.interval,
