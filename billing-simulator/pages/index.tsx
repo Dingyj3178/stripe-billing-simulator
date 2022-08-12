@@ -69,7 +69,6 @@ export default function Home() {
 
   // const router = useRouter();
   // const { intial_create_date, intial_interval_count } = router.query;
-  // console.log("query:" + JSON.stringify(query));
 
   let [isShowing, setIsShowing] = useState(false);
   // const [pricingTiers, setPricingTiers] = useState([

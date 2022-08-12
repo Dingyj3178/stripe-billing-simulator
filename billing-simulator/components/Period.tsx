@@ -41,15 +41,7 @@ function Period({ parameter }: { parameter: Parameters }) {
   function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
   }
-  // console.log("width:" + width);
 
-  // console.log("endDate:" + endDate);
-  // console.log("updateDate:" + updateDate);
-  // console.log("timeline:" + timeline);
-  // console.log("startPoint:" + startPoint);
-  // console.log("trialEndPoint:" + trialEndPoint);
-  // console.log("billingPoint:" + billingPoint);
-  // console.log("updatePoint:" + updatePoint);
   return (
     <div>
       {/* Create the date point */}
