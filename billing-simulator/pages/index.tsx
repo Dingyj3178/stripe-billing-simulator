@@ -1,10 +1,10 @@
 import Head from "next/head";
-import React, { useRef, useState, Fragment } from "react";
+import React, { useRef, useState, Fragment, useEffect } from "react";
 import { useTimeoutFn } from "react-use";
 import { Transition } from "@headlessui/react";
 import { DownloadIcon, ClipboardCopyIcon } from "@heroicons/react/solid";
 
-import { Formik, Form } from "formik";
+import { Formik, Form, useFormikContext } from "formik";
 import SimulatorValidationSchema from "../components/SimulatorValidationSchema";
 
 import * as htmlToImage from "html-to-image";
@@ -18,7 +18,11 @@ import setHours from "date-fns/setHours";
 import setMinutes from "date-fns/setMinutes";
 import setSeconds from "date-fns/setSeconds";
 
+import queryString from "query-string";
+
 import dynamic from "next/dynamic";
+import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 
 import Navbar from "../components/Navbar";
 import Timeline from "../components/Timeline";
@@ -27,6 +31,8 @@ import PricingChart from "../components/PricingChart";
 import MeteredChart from "../components/MeteredChart";
 import TiersTable from "../components/TiersTable";
 import MetersTable from "../components/MetersTable";
+// import Eventpoint from "../components/Eventpoint";
+// import Period from "../components/Period";
 
 import { Parameters } from "../typings";
 
@@ -37,34 +43,74 @@ const Period = dynamic(() => import("../components/Period"), {
   ssr: false,
 });
 
-export default function Home() {
+const Submission = () => {
+  const { submitForm } = useFormikContext();
+  useEffect(() => {
+    // Submit the form imperatively as an effect as soon as form values.token are 6 digits long
+    submitForm();
+  }, []);
+  return null;
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const queryValue = queryString.parse(context.resolvedUrl.slice(2), {
+    arrayFormat: "index",
+  });
+  return {
+    props: { queryValue },
+  };
+};
+
+export default function Home({ queryValue }: { queryValue: any }) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const router = useRouter();
 
   const initValues: Parameters = {
-    create_date: setHours(setMinutes(setSeconds(new Date(), 0), 0), 0),
-    interval: "month",
-    interval_count: 1,
-    billing_cycle_anchor: null,
-    trial_end: null,
-    proration_behavior: "none",
-    unit_amount: 1000,
-    currency: "usd",
-    usage_type: "licensed",
-    tiers_mode: "",
-    aggregate_usage: "sum",
-    pricingTiers: [
-      { up_to: 1, unit_amount: 1000, flat_amount: 0 },
-      { up_to: "inf", unit_amount: 1000, flat_amount: 0 },
-    ],
-    usageRecord: [
-      {
-        quantity: 1,
-        action: "increment",
-        timestamp: Math.floor(
-          Number(setHours(setMinutes(setSeconds(new Date(), 0), 0), 0)) / 1000
-        ),
-      },
-    ],
+    create_date: queryValue.create_date
+      ? new Date(queryValue.create_date * 1000)
+      : setHours(setMinutes(setSeconds(new Date(), 0), 0), 0),
+    interval: queryValue.interval ? queryValue.interval : "month",
+    interval_count: queryValue.interval_count ? queryValue.interval_count : 1,
+    billing_cycle_anchor:
+      queryValue.billing_cycle_anchor &&
+      queryValue.billing_cycle_anchor !== "" &&
+      queryValue.billing_cycle_anchor !== "0"
+        ? new Date(queryValue.billing_cycle_anchor * 1000)
+        : null,
+    trial_end:
+      queryValue.trial_end &&
+      queryValue.trial_end !== "" &&
+      queryValue.trial_end !== "0"
+        ? new Date(queryValue.trial_end * 1000)
+        : null,
+    proration_behavior: queryValue.proration_behavior
+      ? queryValue.proration_behavior
+      : "none",
+    unit_amount: queryValue.unit_amount ? queryValue.unit_amount : 1000,
+    currency: queryValue.currency ? queryValue.currency : "usd",
+    usage_type: queryValue.usage_type ? queryValue.usage_type : "licensed",
+    tiers_mode: queryValue.tiers_mode ? queryValue.tiers_mode : "",
+    aggregate_usage: queryValue.aggregate_usage
+      ? queryValue.aggregate_usage
+      : "sum",
+    pricingTiers: queryValue.pricingTiers
+      ? queryValue.pricingTiers.map((i: any) => JSON.parse(i))
+      : [
+          { up_to: 1, unit_amount: 1000, flat_amount: 0 },
+          { up_to: "inf", unit_amount: 1000, flat_amount: 0 },
+        ],
+    usageRecord: queryValue.usageRecord
+      ? queryValue.usageRecord.map((i: any) => JSON.parse(i))
+      : [
+          {
+            quantity: 1,
+            action: "increment",
+            timestamp: Math.floor(
+              Number(setHours(setMinutes(setSeconds(new Date(), 0), 0), 0)) /
+                1000
+            ),
+          },
+        ],
   };
 
   // const router = useRouter();
@@ -157,7 +203,38 @@ export default function Home() {
                   value: "submit",
                 });
                 setParameter(values);
-                // console.log(parameter);
+                router.push(
+                  `/?${queryString.stringify(
+                    {
+                      create_date: Math.floor(
+                        Number(values.create_date) / 1000
+                      ),
+                      interval: values.interval,
+                      interval_count: values.interval_count,
+                      billing_cycle_anchor: Math.floor(
+                        Number(values.billing_cycle_anchor) / 1000
+                      ),
+                      trial_end: Math.floor(Number(values.trial_end) / 1000),
+                      proration_behavior: values.proration_behavior,
+                      unit_amount: values.unit_amount,
+                      currency: values.currency,
+                      usage_type: values.usage_type,
+                      tiers_mode: values.tiers_mode,
+                      aggregate_usage: values.aggregate_usage,
+                      pricingTiers: values.pricingTiers.map((i) =>
+                        JSON.stringify(i)
+                      ),
+                      usageRecord: values.usageRecord.map((i) =>
+                        JSON.stringify(i)
+                      ),
+                    },
+                    { arrayFormat: "index" }
+                  )}`,
+                  undefined,
+                  {
+                    shallow: true,
+                  }
+                );
               }}
             >
               {({
@@ -169,6 +246,7 @@ export default function Home() {
                 touched,
               }) => (
                 <Form className="space-y-8 divide-y divide-gray-200">
+                  <Submission />
                   <div className="pt-5">
                     <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                       <div className="sm:col-span-2">

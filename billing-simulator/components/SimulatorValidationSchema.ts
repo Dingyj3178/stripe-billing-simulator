@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { calculateUpdate } from "../utils/timelineHelper";
+import { checkNextNaturalUpdate } from "../utils/timelineHelper";
 import { pricingTiers, usageRecord } from "../typings";
 
 function arrayUptoValidate(array: pricingTiers[]) {
@@ -56,7 +56,7 @@ function SimulatorValidationSchema() {
           if (value !== null) {
             return (
               new Date(value!) <=
-              calculateUpdate(
+              checkNextNaturalUpdate(
                 this.parent.trial_end,
                 this.parent.create_date,
                 this.parent.interval,
