@@ -142,6 +142,7 @@ function SimulatorValidationSchema() {
       }),
     interval_count: Yup.number()
       .required("Required")
+      .positive("interval_count must greater than 1")
       .when("interval", {
         is: "month",
         then: (schema) => schema.max(11),
