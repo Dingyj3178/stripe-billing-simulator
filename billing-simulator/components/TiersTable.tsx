@@ -153,7 +153,7 @@ const TiersTable = ({
                                   )}
                                 </Field>
                               </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 ">
+                              <td className="whitespace-nowrap px-1 py-4 text-sm text-gray-500 ">
                                 <Field
                                   name={`pricingTiers.${index}.unit_amount`}
                                 >
@@ -200,7 +200,7 @@ const TiersTable = ({
                                   )}
                                 </Field>
                               </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 group relative">
+                              <td className="whitespace-nowrap px-1 py-4 text-sm text-gray-500 group relative">
                                 <Field
                                   name={`pricingTiers.${index}.flat_amount`}
                                 >
@@ -242,7 +242,7 @@ const TiersTable = ({
                                     </div>
                                   )}
                               </td>
-                              <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                              <td className="relative whitespace-nowrap py-4 pl-1 pr-1 text-right text-sm font-medium sm:pr-6">
                                 <button
                                   className="disabled:opacity-0"
                                   disabled={

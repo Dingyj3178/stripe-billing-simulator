@@ -59,11 +59,12 @@ function Eventpoint({ parameter }: { parameter: Parameters }) {
           id="d-create-date"
           className=" inline-block px-3 py-0.5 rounded-full text-sm font-medium text-gray-50 bg-violet-500 mb-20 break-words w-24 text-center"
         >
-          {parameter.billing_cycle_anchor !== null &&
-          parameter.trial_end === null &&
-          parameter.proration_behavior === "create_prorations"
-            ? "Creation  Charge"
-            : "Creation"}
+          {parameter.trial_end !== null ||
+          parameter.usage_type === "metered" ||
+          (parameter.billing_cycle_anchor !== null &&
+            parameter.proration_behavior === "none")
+            ? "Creation"
+            : "Creation Charge"}
         </span>
         {parameter.trial_end === null ? null : (
           <div className=" inline-block">
@@ -77,7 +78,9 @@ function Eventpoint({ parameter }: { parameter: Parameters }) {
               id="d-trial_end"
               className=" inline-block px-3 py-0.5 rounded-full text-sm font-medium text-gray-50 bg-violet-500 mb-20 break-words w-24 text-center"
             >
-              Trial End Charge
+              {parameter.usage_type === "metered"
+                ? "Trial End"
+                : "Trial End Charge"}
             </span>
           </div>
         )}

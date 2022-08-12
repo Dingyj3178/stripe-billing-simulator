@@ -35,7 +35,7 @@ function setPricingParameter(parameter: Parameters) {
     },
     {
       key: "recurring[usage_type]",
-      value: "licensed",
+      value: parameter.usage_type,
       type: "text",
     },
     {
@@ -258,11 +258,13 @@ export const postmanExport = (parameter: Parameters) => {
                   value: "{{price_id}}",
                   type: "text",
                 },
-                {
-                  key: "items[0][quantity]",
-                  value: "1",
-                  type: "text",
-                },
+                parameter.usage_type !== "metered"
+                  ? {
+                      key: "items[0][quantity]",
+                      value: "1",
+                      type: "text",
+                    }
+                  : "",
                 {
                   key: "proration_behavior",
                   value: parameter.proration_behavior,

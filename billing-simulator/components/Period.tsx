@@ -61,7 +61,8 @@ function Period({ parameter }: { parameter: Parameters }) {
           style={{ left: (width - 6) * (startPoint / timeline) + "px" }}
         >
           {parameter.proration_behavior === "none" &&
-          parameter.billing_cycle_anchor !== null ? null : (
+          parameter.billing_cycle_anchor !== null &&
+          parameter.usage_type === "licensed" ? null : (
             <div id="line-create_date" className=" w-1 h-12 bg-[#0A2540]" />
           )}
         </div>
@@ -105,7 +106,10 @@ function Period({ parameter }: { parameter: Parameters }) {
             >
               <div id="line-billing-date" className=" w-1 h-12 bg-[#0A2540]" />
             </div>
-            {parameter.proration_behavior === "create_prorations" ? (
+            {(parameter.proration_behavior === "create_prorations" &&
+              parameter.usage_type === "licensed") ||
+            (parameter.proration_behavior === "none" &&
+              parameter.usage_type === "metered") ? (
               <Xarrow
                 startAnchor={"right"}
                 endAnchor={"left"}
@@ -122,7 +126,13 @@ function Period({ parameter }: { parameter: Parameters }) {
                 strokeWidth={2}
                 dashness
                 showTail
-                labels={<div className=" mt-20 ">Proration</div>}
+                labels={
+                  <div className=" mt-20 ">
+                    {parameter.usage_type === "metered"
+                      ? "Charge Period"
+                      : "Proration"}
+                  </div>
+                }
                 tailShape="arrow1"
                 headShape="arrow1"
               />

@@ -12,6 +12,12 @@ export type pricingTiers = {
   flat_amount: number;
 };
 
+export type usageRecord = {
+  quantity: number;
+  action: "set" | "increment";
+  timestamp: number | "now";
+};
+
 export type Parameters = {
   create_date: Date | null;
   interval: string;
@@ -23,7 +29,9 @@ export type Parameters = {
   currency: string;
   usage_type: string;
   tiers_mode: string;
+  aggregate_usage: string;
   pricingTiers: pricingTiers[];
+  usageRecord: usageRecord[];
 };
 
 export type EventResult = {

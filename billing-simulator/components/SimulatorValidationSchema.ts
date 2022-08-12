@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 import { calculateUpdate } from "../utils/timelineHelper";
-import { pricingTiers } from "../typings";
+import { pricingTiers, usageRecord } from "../typings";
 
 function arrayUptoValidate(array: pricingTiers[]) {
   let length = array.length - 1;
@@ -9,6 +9,20 @@ function arrayUptoValidate(array: pricingTiers[]) {
     let nextIndex = index + 1;
     if (nextIndex < length) {
       return Number(value.up_to) * 1 < Number(array[nextIndex].up_to) * 1;
+    } else {
+      return true;
+    }
+  });
+}
+
+function arrayTimestampValidate(array: usageRecord[]) {
+  let length = array.length - 1;
+  return array.every((value, index) => {
+    let nextIndex = index + 1;
+    if (nextIndex <= length) {
+      return (
+        Number(value.timestamp) * 1 <= Number(array[nextIndex].timestamp) * 1
+      );
     } else {
       return true;
     }
@@ -78,7 +92,21 @@ function SimulatorValidationSchema() {
             this.parent.trial_end !== null &&
             this.parent.billing_cycle_anchor !== null
           ) {
-            return value === "create_prorations";
+            return (
+              value === "create_prorations" ||
+              this.parent.usage_type === "metered"
+            );
+          } else return true;
+        },
+      })
+      .test({
+        name: "proration_behavior",
+        exclusive: false,
+        params: {},
+        message: "Prorations are not generated for metered subscription.",
+        test: function (value) {
+          if (this.parent.usage_type === "metered") {
+            return value === "none";
           } else return true;
         },
       }),
@@ -152,7 +180,7 @@ function SimulatorValidationSchema() {
               name: "up_to",
               exclusive: false,
               params: {},
-              message: "keep up_to less then 100 for better experience",
+              message: "keep up_to less then 100 for a better experience",
               test: function (value) {
                 if (value !== "inf") {
                   return Number(value!) * 1 <= 100;
@@ -194,6 +222,21 @@ function SimulatorValidationSchema() {
         message: "each tier's up_to must greater then previous tier ",
         test: function (value) {
           return arrayUptoValidate(value as pricingTiers[]);
+        },
+      }),
+    usageRecord: Yup.array()
+      .test({
+        name: "usageRecord",
+        message: "each timestamp must greater then previous timestamp ",
+        test: function (value) {
+          return arrayTimestampValidate(value as usageRecord[]);
+        },
+      })
+      .test({
+        name: "usageRecord",
+        message: "keep record less 10 for a better experience",
+        test: function (value) {
+          return value?.length! <= 10;
         },
       }),
   });

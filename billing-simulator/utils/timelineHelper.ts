@@ -260,3 +260,39 @@ export const calculateUpdate = (
       : addDays(new Date(endDate), interval_count * 1);
   return updateDate;
 };
+
+function padTo2Digits(num: number) {
+  return num.toString().padStart(2, "0");
+}
+
+export const formatDate = (date: Date, withTiem: boolean) => {
+  if (withTiem) {
+    return (
+      [
+        date.getFullYear(),
+        padTo2Digits(date.getMonth() + 1),
+        padTo2Digits(date.getDate()),
+      ].join("-") +
+      " " +
+      [
+        padTo2Digits(date.getHours()),
+        padTo2Digits(date.getMinutes()),
+        padTo2Digits(date.getSeconds()),
+      ].join(":")
+    ).toString();
+  } else {
+    return [
+      date.getFullYear(),
+      padTo2Digits(date.getMonth() + 1),
+      padTo2Digits(date.getDate()),
+    ]
+      .join("-")
+      .toString();
+  }
+};
+export const dsadfa = (dt: Date, withTiem: boolean) => {
+  var y = dt.getFullYear();
+  var m = ("00" + (dt.getMonth() + 1)).slice(-2);
+  var d = ("00" + dt.getDate()).slice(-2);
+  return y + "-" + m + "-" + d;
+};
