@@ -244,6 +244,30 @@ export const widthCalculator = (
 };
 
 export const calculateUpdate = (
+  billing_cycle_anchor: Date,
+  trial_end: Date,
+  create_date: Date,
+  interval: string,
+  interval_count: number
+) => {
+  const endDate =
+    billing_cycle_anchor !== null
+      ? billing_cycle_anchor
+      : trial_end !== null
+      ? trial_end
+      : create_date;
+  const updateDate =
+    interval === "year"
+      ? addYears(new Date(endDate), interval_count * 1)
+      : interval === "month"
+      ? addMonths(new Date(endDate), interval_count * 1)
+      : interval === "week"
+      ? addWeeks(new Date(endDate), interval_count * 1)
+      : addDays(new Date(endDate), interval_count * 1);
+  return updateDate;
+};
+
+export const checkNextNaturalUpdate = (
   trial_end: Date,
   create_date: Date,
   interval: string,

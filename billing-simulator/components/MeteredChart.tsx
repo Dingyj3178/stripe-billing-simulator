@@ -120,6 +120,11 @@ function calculatePrice(
           parameter.pricingTiers[index].flat_amount;
 
         counter = parameter.pricingTiers[index - 1].up_to as number;
+      } else if (index === 0 && counter < element.up_to && counter !== 0) {
+        price =
+          price +
+          counter * parameter.pricingTiers[index].unit_amount +
+          parameter.pricingTiers[index].flat_amount;
       }
     }
     return price;
@@ -151,6 +156,7 @@ function MeteredChart({ parameter }: { parameter: Parameters }) {
   labels.push(
     Math.floor(
       calculateUpdate(
+        parameter.billing_cycle_anchor as Date,
         parameter.trial_end as Date,
         parameter.create_date as Date,
         parameter.interval,
