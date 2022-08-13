@@ -13,17 +13,19 @@ import { useXarrow } from "react-xarrows";
 
 import { eventPointCalculator, widthCalculator } from "../utils/timelineHelper";
 
+import { Parameters } from "../typings";
+
 // import Xarrow from "react-xarrows";
 
 const Xarrow = dynamic(() => import("react-xarrows"), { ssr: false });
 
-function Period({ parameter }) {
+function Period({ parameter }: { parameter: Parameters }) {
   const updateXarrow = useXarrow();
 
   const [width, setWidth] = useState(0);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    setWidth(ref.current.clientWidth);
+    setWidth(ref.current!.clientWidth);
   });
   useEffect(() => {
     updateXarrow();
@@ -36,18 +38,10 @@ function Period({ parameter }) {
   const trialEndPoint = result.trialEndPoint;
   const billingPoint = result.billingPoint;
 
-  function classNames(...classes) {
+  function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
   }
-  // console.log("width:" + width);
 
-  // console.log("endDate:" + endDate);
-  // console.log("updateDate:" + updateDate);
-  // console.log("timeline:" + timeline);
-  // console.log("startPoint:" + startPoint);
-  // console.log("trialEndPoint:" + trialEndPoint);
-  // console.log("billingPoint:" + billingPoint);
-  // console.log("updatePoint:" + updatePoint);
   return (
     <div>
       {/* Create the date point */}
@@ -59,7 +53,8 @@ function Period({ parameter }) {
           style={{ left: (width - 6) * (startPoint / timeline) + "px" }}
         >
           {parameter.proration_behavior === "none" &&
-          parameter.billing_cycle_anchor !== null ? null : (
+          parameter.billing_cycle_anchor !== null &&
+          parameter.usage_type === "licensed" ? null : (
             <div id="line-create_date" className=" w-1 h-12 bg-[#0A2540]" />
           )}
         </div>
@@ -103,7 +98,10 @@ function Period({ parameter }) {
             >
               <div id="line-billing-date" className=" w-1 h-12 bg-[#0A2540]" />
             </div>
-            {parameter.proration_behavior === "create_prorations" ? (
+            {(parameter.proration_behavior === "create_prorations" &&
+              parameter.usage_type === "licensed") ||
+            (parameter.proration_behavior === "none" &&
+              parameter.usage_type === "metered") ? (
               <Xarrow
                 startAnchor={"right"}
                 endAnchor={"left"}
@@ -120,7 +118,13 @@ function Period({ parameter }) {
                 strokeWidth={2}
                 dashness
                 showTail
-                labels={<div className=" mt-20 ">Proration</div>}
+                labels={
+                  <div className=" mt-20 ">
+                    {parameter.usage_type === "metered"
+                      ? "Charge Period"
+                      : "Proration"}
+                  </div>
+                }
                 tailShape="arrow1"
                 headShape="arrow1"
               />

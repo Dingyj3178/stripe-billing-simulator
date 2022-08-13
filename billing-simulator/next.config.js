@@ -9,5 +9,5 @@ const nextConfig = {
 module.exports = nextConfig;
 
 module.exports = withMDX({
-  pageExtensions: ["js", "jsx", "mdx"],
+  pageExtensions: ["js", "jsx", "ts", "tsx", "mdx"],
 });

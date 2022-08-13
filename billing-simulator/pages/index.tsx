@@ -1,15 +1,10 @@
 import Head from "next/head";
-import React, { useRef, useState, Fragment } from "react";
+import React, { useRef, useState, Fragment, useEffect } from "react";
 import { useTimeoutFn } from "react-use";
 import { Transition } from "@headlessui/react";
-import {
-  DownloadIcon,
-  ClipboardCopyIcon,
-  PlusIcon,
-  XIcon,
-} from "@heroicons/react/solid";
+import { DownloadIcon, ClipboardCopyIcon } from "@heroicons/react/solid";
 
-import { Formik, Form, Field, FieldArray } from "formik";
+import { Formik, Form, useFormikContext } from "formik";
 import SimulatorValidationSchema from "../components/SimulatorValidationSchema";
 
 import * as htmlToImage from "html-to-image";
@@ -23,12 +18,23 @@ import setHours from "date-fns/setHours";
 import setMinutes from "date-fns/setMinutes";
 import setSeconds from "date-fns/setSeconds";
 
+import queryString from "query-string";
+
 import dynamic from "next/dynamic";
+import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 
 import Navbar from "../components/Navbar";
 import Timeline from "../components/Timeline";
 import InputLabel from "../components/InputLabel";
 import PricingChart from "../components/PricingChart";
+import MeteredChart from "../components/MeteredChart";
+import TiersTable from "../components/TiersTable";
+import MetersTable from "../components/MetersTable";
+// import Eventpoint from "../components/Eventpoint";
+// import Period from "../components/Period";
+
+import { Parameters } from "../typings";
 
 const Eventpoint = dynamic(() => import("../components/Eventpoint"), {
   ssr: false,
@@ -37,19 +43,88 @@ const Period = dynamic(() => import("../components/Period"), {
   ssr: false,
 });
 
-export default function Home() {
-  const textAreaRef = useRef(null);
+const Submission = () => {
+  const { submitForm } = useFormikContext();
+  useEffect(() => {
+    // Submit the form imperatively as an effect as soon as form values.token are 6 digits long
+    submitForm();
+  }, []);
+  return null;
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const queryValue = queryString.parse(context.resolvedUrl.slice(2), {
+    arrayFormat: "index",
+  });
+  return {
+    props: { queryValue },
+  };
+};
+
+export default function Home({ queryValue }: { queryValue: any }) {
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const router = useRouter();
+
+  const initValues: Parameters = {
+    create_date: queryValue.create_date
+      ? new Date(queryValue.create_date * 1000)
+      : setHours(setMinutes(setSeconds(new Date(), 0), 0), 0),
+    interval: queryValue.interval ? queryValue.interval : "month",
+    interval_count: queryValue.interval_count ? queryValue.interval_count : 1,
+    billing_cycle_anchor:
+      queryValue.billing_cycle_anchor &&
+      queryValue.billing_cycle_anchor !== "" &&
+      queryValue.billing_cycle_anchor !== "0"
+        ? new Date(queryValue.billing_cycle_anchor * 1000)
+        : null,
+    trial_end:
+      queryValue.trial_end &&
+      queryValue.trial_end !== "" &&
+      queryValue.trial_end !== "0"
+        ? new Date(queryValue.trial_end * 1000)
+        : null,
+    proration_behavior: queryValue.proration_behavior
+      ? queryValue.proration_behavior
+      : "none",
+    unit_amount: queryValue.unit_amount ? queryValue.unit_amount : 1000,
+    currency: queryValue.currency ? queryValue.currency : "usd",
+    usage_type: queryValue.usage_type ? queryValue.usage_type : "licensed",
+    tiers_mode: queryValue.tiers_mode ? queryValue.tiers_mode : "",
+    aggregate_usage: queryValue.aggregate_usage
+      ? queryValue.aggregate_usage
+      : "sum",
+    pricingTiers: queryValue.pricingTiers
+      ? queryValue.pricingTiers.map((i: any) => JSON.parse(i))
+      : [
+          { up_to: 1, unit_amount: 1000, flat_amount: 0 },
+          { up_to: "inf", unit_amount: 1000, flat_amount: 0 },
+        ],
+    usageRecord: queryValue.usageRecord
+      ? queryValue.usageRecord
+          .map((i: any) => JSON.parse(i))
+          .map((i: any) => ({
+            quantity: i.quantity,
+            action: i.action,
+            timestamp: new Date(i.timestamp * 1000),
+          }))
+      : [
+          {
+            quantity: 1,
+            action: "increment",
+            timestamp: setHours(setMinutes(setSeconds(new Date(), 0), 0), 0),
+          },
+        ],
+  };
 
   // const router = useRouter();
   // const { intial_create_date, intial_interval_count } = router.query;
-  // console.log("query:" + JSON.stringify(query));
 
   let [isShowing, setIsShowing] = useState(false);
   // const [pricingTiers, setPricingTiers] = useState([
   //   { id: 1, up_to: 1, unit_amount: 1000, flat_amount: 0 },
   // ]);
   let [, , resetIsShowing] = useTimeoutFn(() => setIsShowing(false), 1000);
-  const [parameter, setParameter] = useState({
+  const [parameter, setParameter] = useState<Parameters>({
     create_date: setHours(setMinutes(setSeconds(new Date(), 0), 0), 0),
     interval: "month",
     interval_count: 1,
@@ -60,20 +135,28 @@ export default function Home() {
     currency: "usd",
     usage_type: "licensed",
     tiers_mode: "",
+    aggregate_usage: "sum",
     pricingTiers: [
       { up_to: 1, unit_amount: 1000, flat_amount: 0 },
       { up_to: "inf", unit_amount: 1000, flat_amount: 0 },
     ],
+    usageRecord: [
+      {
+        quantity: 1,
+        action: "increment",
+        timestamp: setHours(setMinutes(setSeconds(new Date(), 0), 0), 0),
+      },
+    ],
   });
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(textAreaRef.current.value);
+    navigator.clipboard.writeText(textAreaRef.current!.value);
     setIsShowing(true);
     resetIsShowing();
   };
   const downloadBillingSchedule = () => {
     htmlToImage
-      .toPng(document.getElementById("billingSchedule"), {
+      .toPng(document.getElementById("billingSchedule")!, {
         backgroundColor: "#f6f9fb",
         quality: 1,
         cacheBust: true,
@@ -111,33 +194,52 @@ export default function Home() {
         <div className="lg:grid lg:grid-cols-3 lg:gap-6">
           <div className="md:col-span-1">
             <Formik
-              initialValues={{
-                create_date: setHours(
-                  setMinutes(setSeconds(new Date(), 0), 0),
-                  0
-                ),
-                interval: "month",
-                interval_count: 1,
-                billing_cycle_anchor: null,
-                trial_end: null,
-                proration_behavior: "none",
-                unit_amount: 1000,
-                currency: "usd",
-                usage_type: "licensed",
-                tiers_mode: "",
-                pricingTiers: [
-                  { up_to: 1, unit_amount: 1000, flat_amount: 0 },
-                  { up_to: "inf", unit_amount: 1000, flat_amount: 0 },
-                ],
-              }}
+              initialValues={initValues}
               validationSchema={SimulatorValidationSchema()}
               onSubmit={(values) => {
                 gtag.event({
                   action: "submit_form",
                   category: "Update",
+                  label: "submit",
+                  value: "submit",
                 });
                 setParameter(values);
-                // console.log(parameter);
+                router.push(
+                  `/?${queryString.stringify(
+                    {
+                      create_date: Math.floor(
+                        Number(values.create_date) / 1000
+                      ),
+                      interval: values.interval,
+                      interval_count: values.interval_count,
+                      billing_cycle_anchor: Math.floor(
+                        Number(values.billing_cycle_anchor) / 1000
+                      ),
+                      trial_end: Math.floor(Number(values.trial_end) / 1000),
+                      proration_behavior: values.proration_behavior,
+                      unit_amount: values.unit_amount,
+                      currency: values.currency,
+                      usage_type: values.usage_type,
+                      tiers_mode: values.tiers_mode,
+                      aggregate_usage: values.aggregate_usage,
+                      pricingTiers: values.pricingTiers.map((i) =>
+                        JSON.stringify(i)
+                      ),
+                      usageRecord: values.usageRecord
+                        .map((i) => ({
+                          quantity: i.quantity,
+                          action: i.action,
+                          timestamp: Math.floor(Number(i.timestamp) / 1000),
+                        }))
+                        .map((i) => JSON.stringify(i)),
+                    },
+                    { arrayFormat: "index" }
+                  )}`,
+                  undefined,
+                  {
+                    shallow: true,
+                  }
+                );
               }}
             >
               {({
@@ -149,6 +251,7 @@ export default function Home() {
                 touched,
               }) => (
                 <Form className="space-y-8 divide-y divide-gray-200">
+                  <Submission />
                   <div className="pt-5">
                     <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                       <div className="sm:col-span-2">
@@ -177,11 +280,13 @@ export default function Home() {
                               gtag.event({
                                 action: "update_create_date",
                                 category: "Update",
+                                label: "Update",
+                                value: "Update",
                               });
                               setFieldValue("create_date", date);
                             }}
                             onBlur={handleBlur}
-                            value={values.create_date}
+                            value={values.create_date as unknown as string}
                             autoComplete="off"
                             showTimeInput
                             dateFormat="MM/dd/yyyy hh:mm:ss"
@@ -189,11 +294,10 @@ export default function Home() {
                         </div>
                         {errors.create_date ? (
                           <div className="text-sm text-red-600">
-                            {errors.create_date}
+                            {errors.create_date as string}
                           </div>
                         ) : null}
                       </div>
-
                       <div className="sm:col-span-1">
                         {/* <label
                       htmlFor="billing_cycle_anchor"
@@ -234,11 +338,17 @@ export default function Home() {
                               gtag.event({
                                 action: "update_billing_cycle_anchor",
                                 category: "Update",
+                                label: "Update",
+                                value: "Update",
                               });
                               setFieldValue("billing_cycle_anchor", date);
                             }}
                             onBlur={handleBlur}
-                            value={values.billing_cycle_anchor}
+                            value={
+                              values.billing_cycle_anchor
+                                ? (values.billing_cycle_anchor as unknown as string)
+                                : ""
+                            }
                             autoComplete="off"
                             showTimeInput
                             dateFormat="MM/dd/yyyy hh:mm:ss"
@@ -282,11 +392,13 @@ export default function Home() {
                               gtag.event({
                                 action: "update_trial_end",
                                 category: "Update",
+                                label: "Update",
+                                value: "Update",
                               });
                               setFieldValue("trial_end", date);
                             }}
                             onBlur={handleBlur}
-                            value={values.trial_end}
+                            value={values.trial_end as unknown as string}
                             autoComplete="off"
                             showTimeInput
                             dateFormat="MM/dd/yyyy hh:mm:ss"
@@ -298,7 +410,6 @@ export default function Home() {
                           </div>
                         ) : null}
                       </div>
-
                       <div className="sm:col-span-1">
                         <InputLabel
                           labelName={"proration_behavior"}
@@ -337,7 +448,7 @@ export default function Home() {
                           </div>
                         ) : null}
                       </div>
-                      <div className="sm:col-span-2 border-t pt-5">
+                      <div className="sm:col-span-2 border-t pt-5 lg:mt-28">
                         <div>
                           <h3 className="text-lg leading-6 font-medium text-gray-900">
                             Price
@@ -539,10 +650,7 @@ export default function Home() {
                             onChange={handleChange}
                           >
                             <option value={"licensed"}>licensed</option>
-                            <option disabled value={"metered"}>
-                              metered (simulator doesn't support metered mode
-                              yet)
-                            </option>
+                            <option value={"metered"}>metered</option>
                           </select>
                         </div>
                         {touched.usage_type && errors.usage_type ? (
@@ -608,358 +716,69 @@ export default function Home() {
                           </div>
                         ) : null}
                       </div>
-                      <FieldArray
-                        name="pricingTiers"
-                        render={(arrayHelpers) =>
-                          values.pricingTiers &&
-                          values.pricingTiers.length > 0 &&
-                          values.tiers_mode !== "" ? (
-                            <div className="sm:col-span-2">
-                              <div className="flex justify-between">
-                                <InputLabel
-                                  labelName={"tiers"}
-                                  tooltipContents={
-                                    <p className="before:contents-[''] before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99]  hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block w-52   absolute bottom-[22px] shadow-lg	  ">
-                                      Each element represents a pricing tier.
-                                      This parameter requires billing_scheme to
-                                      be set to tiered. See also the
-                                      documentation for billing_scheme.{" "}
-                                      <a
-                                        href="https://stripe.com/docs/api/prices/create#create_price-tiers"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                      >
-                                        {" "}
-                                        more
-                                      </a>
-                                    </p>
-                                  }
-                                />
-                                <button
-                                  className=" inline-flex text-sm font-medium text-indigo-500 items-center"
-                                  onClick={() =>
-                                    arrayHelpers.insert(
-                                      values.pricingTiers.length - 1,
-                                      {
-                                        up_to:
-                                          values.pricingTiers[
-                                            values.pricingTiers.length - 2
-                                          ].up_to + 2,
-                                        unit_amount: 1000,
-                                        flat_amount: 0,
-                                      }
-                                    )
-                                  }
-                                >
-                                  <PlusIcon className="w-4 h-4 text-indigo-500" />
-                                  add tier
-                                </button>
-                              </div>
 
-                              <div>
-                                <div className="mt-1 flex flex-col">
-                                  <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                                    <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                                      <div className=" shadow ring-1 ring-black ring-opacity-5 md:rounded-lg ">
-                                        <table className=" divide-y divide-gray-300 w-full">
-                                          <thead className="bg-gray-50">
-                                            <tr>
-                                              <th
-                                                scope="col"
-                                                className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
-                                              >
-                                                #
-                                              </th>
-                                              <th
-                                                scope="col"
-                                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                              >
-                                                up_to
-                                              </th>
-                                              <th
-                                                scope="col"
-                                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                              >
-                                                unit_amount
-                                              </th>
-                                              <th
-                                                scope="col"
-                                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                              >
-                                                flat_amount
-                                              </th>
-                                              <th
-                                                scope="col"
-                                                className="relative py-3.5 pl-3 pr-4 sm:pr-6"
-                                              >
-                                                <span className="sr-only">
-                                                  Edit
-                                                </span>
-                                              </th>
-                                            </tr>
-                                          </thead>
-                                          <tbody className="divide-y divide-gray-200 bg-white">
-                                            {values.pricingTiers.map(
-                                              (tier, index) => (
-                                                <tr key={index}>
-                                                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                                    {index + 1}
-                                                  </td>
-                                                  <td className="whitespace-nowrap px-1 py-4 text-sm text-gray-500">
-                                                    <Field
-                                                      name={`pricingTiers.${index}.up_to`}
-                                                    >
-                                                      {({ field }) => (
-                                                        <div className=" relative group">
-                                                          <input
-                                                            className={
-                                                              errors &&
-                                                              errors.pricingTiers &&
-                                                              errors
-                                                                .pricingTiers[
-                                                                index
-                                                              ] &&
-                                                              errors
-                                                                .pricingTiers[
-                                                                index
-                                                              ].up_to &&
-                                                              touched &&
-                                                              touched.pricingTiers &&
-                                                              touched
-                                                                .pricingTiers[
-                                                                index
-                                                              ] &&
-                                                              touched
-                                                                .pricingTiers[
-                                                                index
-                                                              ].up_to
-                                                                ? "shadow-sm focus:ring-red-500 focus:border-red-500 block w-full sm:text-sm border-red-500 rounded-md"
-                                                                : "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                                                            }
-                                                            type={
-                                                              index ===
-                                                              values
-                                                                .pricingTiers
-                                                                .length -
-                                                                1
-                                                                ? "text"
-                                                                : "number"
-                                                            }
-                                                            disabled={
-                                                              index ===
-                                                              values
-                                                                .pricingTiers
-                                                                .length -
-                                                                1
-                                                            }
-                                                            {...field}
-                                                          />
-                                                          {errors &&
-                                                            errors.pricingTiers &&
-                                                            errors.pricingTiers[
-                                                              index
-                                                            ] &&
-                                                            errors.pricingTiers[
-                                                              index
-                                                            ].up_to &&
-                                                            touched &&
-                                                            touched.pricingTiers &&
-                                                            touched
-                                                              .pricingTiers[
-                                                              index
-                                                            ] &&
-                                                            touched
-                                                              .pricingTiers[
-                                                              index
-                                                            ].up_to && (
-                                                              <div className="block">
-                                                                <p className="text-red-600 before:contents-[''] before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99] hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block   absolute bottom-12 shadow-lg	  ">
-                                                                  {
-                                                                    errors
-                                                                      .pricingTiers[
-                                                                      index
-                                                                    ].up_to
-                                                                  }
-                                                                </p>
-                                                              </div>
-                                                            )}
-                                                        </div>
-                                                      )}
-                                                    </Field>
-                                                  </td>
-                                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 ">
-                                                    <Field
-                                                      name={`pricingTiers.${index}.unit_amount`}
-                                                    >
-                                                      {({ field }) => (
-                                                        <div className=" block relative group">
-                                                          <input
-                                                            className={
-                                                              errors &&
-                                                              errors.pricingTiers &&
-                                                              errors
-                                                                .pricingTiers[
-                                                                index
-                                                              ] &&
-                                                              errors
-                                                                .pricingTiers[
-                                                                index
-                                                              ].unit_amount &&
-                                                              touched &&
-                                                              touched.pricingTiers &&
-                                                              touched
-                                                                .pricingTiers[
-                                                                index
-                                                              ] &&
-                                                              touched
-                                                                .pricingTiers[
-                                                                index
-                                                              ].unit_amount
-                                                                ? "shadow-sm focus:ring-red-500 focus:border-red-500 block w-full sm:text-sm border-red-500 rounded-md"
-                                                                : "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                                                            }
-                                                            type="number"
-                                                            {...field}
-                                                          />
-                                                          {errors &&
-                                                            errors.pricingTiers &&
-                                                            errors.pricingTiers[
-                                                              index
-                                                            ] &&
-                                                            errors.pricingTiers[
-                                                              index
-                                                            ].unit_amount &&
-                                                            touched &&
-                                                            touched.pricingTiers &&
-                                                            touched
-                                                              .pricingTiers[
-                                                              index
-                                                            ] &&
-                                                            touched
-                                                              .pricingTiers[
-                                                              index
-                                                            ].unit_amount && (
-                                                              <div className="">
-                                                                <p className="text-red-600 before:contents-[''] before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99] hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block   absolute bottom-12 shadow-lg	  ">
-                                                                  {
-                                                                    errors
-                                                                      .pricingTiers[
-                                                                      index
-                                                                    ]
-                                                                      .unit_amount
-                                                                  }
-                                                                </p>
-                                                              </div>
-                                                            )}
-                                                        </div>
-                                                      )}
-                                                    </Field>
-                                                  </td>
-                                                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 group relative">
-                                                    <Field
-                                                      name={`pricingTiers.${index}.flat_amount`}
-                                                    >
-                                                      {({ field }) => (
-                                                        <div className=" ">
-                                                          <input
-                                                            className={
-                                                              errors &&
-                                                              errors.pricingTiers &&
-                                                              errors
-                                                                .pricingTiers[
-                                                                index
-                                                              ] &&
-                                                              errors
-                                                                .pricingTiers[
-                                                                index
-                                                              ].flat_amount &&
-                                                              touched &&
-                                                              touched.pricingTiers &&
-                                                              touched
-                                                                .pricingTiers[
-                                                                index
-                                                              ] &&
-                                                              touched
-                                                                .pricingTiers[
-                                                                index
-                                                              ].flat_amount
-                                                                ? "shadow-sm focus:ring-red-500 focus:border-red-500 block w-full sm:text-sm border-red-500 rounded-md"
-                                                                : "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                                                            }
-                                                            type="number"
-                                                            {...field}
-                                                          />
-                                                        </div>
-                                                      )}
-                                                    </Field>
-                                                    {errors &&
-                                                      errors.pricingTiers &&
-                                                      errors.pricingTiers[
-                                                        index
-                                                      ] &&
-                                                      errors.pricingTiers[index]
-                                                        .flat_amount &&
-                                                      touched &&
-                                                      touched.pricingTiers &&
-                                                      touched.pricingTiers[
-                                                        index
-                                                      ] &&
-                                                      touched.pricingTiers[
-                                                        index
-                                                      ].flat_amount && (
-                                                        <div className="">
-                                                          <p className="text-red-600  before:contents-[''] before:absolute before:-bottom-3 before:right-0.5 before:w-5 before:h-5 before:hover:visible z-[99] hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible  bg-white  p-2 text-sm inline-block   absolute bottom-16 right-3 shadow-lg	 ">
-                                                            {
-                                                              errors
-                                                                .pricingTiers[
-                                                                index
-                                                              ].flat_amount
-                                                            }
-                                                          </p>
-                                                        </div>
-                                                      )}
-                                                  </td>
-                                                  <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                                    <button
-                                                      className="disabled:opacity-0"
-                                                      disabled={
-                                                        index ===
-                                                          values.pricingTiers
-                                                            .length -
-                                                            1 || index === 0
-                                                      }
-                                                      onClick={() =>
-                                                        arrayHelpers.remove(
-                                                          index
-                                                        )
-                                                      }
-                                                    >
-                                                      <XIcon
-                                                        disabled
-                                                        className="w-4 h-4 text-indigo-500 "
-                                                      />
-                                                    </button>
-                                                  </td>
-                                                </tr>
-                                              )
-                                            )}
-                                          </tbody>
-                                        </table>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                {errors &&
-                                  errors.pricingTiers &&
-                                  typeof errors.pricingTiers === "string" && (
-                                    <div className="text-sm text-red-600 mt-1">
-                                      {errors.pricingTiers}
-                                    </div>
-                                  )}
-                              </div>
+                      {values.usage_type === "metered" ? (
+                        <>
+                          <div className="sm:col-span-2">
+                            <InputLabel
+                              labelName={"aggregate_usage"}
+                              tooltipContents={
+                                <p className="before:contents-[''] before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99]  hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block w-52   absolute bottom-[22px] shadow-lg	  ">
+                                  Specifies a usage aggregation strategy for
+                                  prices of usage_type=metered.{" "}
+                                  <a
+                                    href="https://stripe.com/docs/api/prices/object#price_object-recurring-aggregate_usage"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {" "}
+                                    more
+                                  </a>
+                                </p>
+                              }
+                            />
+                            <div className="mt-1">
+                              <select
+                                id="aggregate_usage"
+                                name="aggregate_usage"
+                                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                value={values.aggregate_usage}
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                              >
+                                <option value={"sum"}>sum</option>
+                                <option disabled value={"last_during_period"}>
+                                  last_during_period
+                                </option>
+                                <option disabled value={"last_ever"}>
+                                  last_ever
+                                </option>
+                                <option disabled value={"max"}>
+                                  max
+                                </option>
+                              </select>
                             </div>
-                          ) : null
-                        }
+                            {touched.aggregate_usage &&
+                            errors.aggregate_usage ? (
+                              <div className="text-sm text-red-600">
+                                {errors.aggregate_usage}
+                              </div>
+                            ) : null}
+                          </div>
+                          <MetersTable
+                            values={values}
+                            errors={errors}
+                            touched={touched}
+                            handleBlur={handleBlur}
+                            setFieldValue={setFieldValue}
+                          />
+                        </>
+                      ) : null}
+
+                      <TiersTable
+                        values={values}
+                        errors={errors}
+                        touched={touched}
                       />
                     </div>
                   </div>
@@ -1001,6 +820,9 @@ export default function Home() {
               <div className="mt-4">
                 <PricingChart pricingData={parameter} />
               </div>
+              {parameter.usage_type === "metered" ? (
+                <MeteredChart parameter={parameter} />
+              ) : null}
               <div>
                 <h3 className="text-lg leading-6 font-medium text-gray-900 mt-4 mb-2">
                   Postman Import Script
@@ -1048,11 +870,3 @@ export default function Home() {
     </>
   );
 }
-
-// export async function getServerSideProps({ query }) {
-//   // console.log(query); // `{ id: 'foo' }`
-//   //...
-//   return {
-//     props: { query }, // will be passed to the page component as props
-//   };
-// }

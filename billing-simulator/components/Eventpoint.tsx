@@ -4,16 +4,17 @@ import dynamic from "next/dynamic";
 import { useXarrow } from "react-xarrows";
 
 import { eventPointCalculator, widthCalculator } from "../utils/timelineHelper";
+import { Parameters } from "../typings";
 
 const Xarrow = dynamic(() => import("react-xarrows"), { ssr: false });
 
-function Eventpoint({ parameter }) {
+function Eventpoint({ parameter }: { parameter: Parameters }) {
   const updateXarrow = useXarrow();
 
   const [timelineWidth, setTimelineWidth] = useState(0);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    setTimelineWidth(ref.current.clientWidth);
+    setTimelineWidth(ref.current!.clientWidth);
   });
   useEffect(() => {
     updateXarrow();
@@ -31,21 +32,10 @@ function Eventpoint({ parameter }) {
   const width3 = widthResult.width3;
   const width4 = widthResult.width4;
 
-  function classNames(...classes) {
+  function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
   }
-  // console.log("width:" + timelineWidth);
-  // console.log("width1:" + width1);
-  // console.log("width2:" + width2);
-  // console.log("width3:" + width3);
-  // console.log("width4:" + width4);
-  // console.log("endDate:" + endDate);
-  // console.log("updateDate:" + updateDate);
-  // console.log("timeline:" + timeline);
-  // console.log("startPoint:" + startPoint);
-  // console.log("trialEndPoint:" + trialEndPoint);
-  // console.log("billingPoint:" + billingPoint);
-  // console.log("updatePoint:" + updatePoint);
+
   return (
     <div className=" bottom-5">
       {/* create the event description */}
@@ -58,11 +48,12 @@ function Eventpoint({ parameter }) {
           id="d-create-date"
           className=" inline-block px-3 py-0.5 rounded-full text-sm font-medium text-gray-50 bg-violet-500 mb-20 break-words w-24 text-center"
         >
-          {parameter.billing_cycle_anchor !== null &&
-          parameter.trial_end === null &&
-          parameter.proration_behavior === "create_prorations"
-            ? "Creation  Charge"
-            : "Creation"}
+          {parameter.trial_end !== null ||
+          parameter.usage_type === "metered" ||
+          (parameter.billing_cycle_anchor !== null &&
+            parameter.proration_behavior === "none")
+            ? "Creation"
+            : "Creation Charge"}
         </span>
         {parameter.trial_end === null ? null : (
           <div className=" inline-block">
@@ -76,7 +67,9 @@ function Eventpoint({ parameter }) {
               id="d-trial_end"
               className=" inline-block px-3 py-0.5 rounded-full text-sm font-medium text-gray-50 bg-violet-500 mb-20 break-words w-24 text-center"
             >
-              Trial End Charge
+              {parameter.usage_type === "metered"
+                ? "Trial End"
+                : "Trial End Charge"}
             </span>
           </div>
         )}
