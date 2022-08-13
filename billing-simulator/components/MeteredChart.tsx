@@ -178,7 +178,7 @@ function MeteredChart({ parameter }: { parameter: Parameters }) {
           ? addYears(
               new Date((greatestUpdateDate as number) * 1000),
               parameter.interval_count *
-                (Math.abs(differenceFromUsageDate) / 86400) >
+                (Math.abs(differenceFromUsageDate) / 86400) >=
                 differenceInCalendarDays(
                   new Date((usageDate as number) * 1000),
                   new Date((greatestUpdateDate as number) * 1000)
@@ -202,7 +202,7 @@ function MeteredChart({ parameter }: { parameter: Parameters }) {
           ? addMonths(
               new Date((greatestUpdateDate as number) * 1000),
               parameter.interval_count *
-                (Math.abs(differenceFromUsageDate) / 86400) >
+                (Math.abs(differenceFromUsageDate) / 86400) >=
                 differenceInCalendarDays(
                   new Date((usageDate as number) * 1000),
                   new Date((greatestUpdateDate as number) * 1000)
@@ -221,7 +221,7 @@ function MeteredChart({ parameter }: { parameter: Parameters }) {
           ? addWeeks(
               new Date((greatestUpdateDate as number) * 1000),
               parameter.interval_count *
-                (Math.abs(differenceFromUsageDate) / 86400) >
+                (Math.abs(differenceFromUsageDate) / 86400) >=
                 differenceInCalendarDays(
                   new Date((usageDate as number) * 1000),
                   new Date((greatestUpdateDate as number) * 1000)
@@ -235,7 +235,7 @@ function MeteredChart({ parameter }: { parameter: Parameters }) {
           : addDays(
               new Date((greatestUpdateDate as number) * 1000),
               parameter.interval_count *
-                (Math.abs(differenceFromUsageDate) / 86400) >
+                (Math.abs(differenceFromUsageDate) / 86400) >=
                 differenceInCalendarDays(
                   new Date((usageDate as number) * 1000),
                   new Date((greatestUpdateDate as number) * 1000)
