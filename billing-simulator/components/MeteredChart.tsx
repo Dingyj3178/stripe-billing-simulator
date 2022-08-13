@@ -168,7 +168,7 @@ function MeteredChart({ parameter }: { parameter: Parameters }) {
   // add the usage record date to the label if it greater than greatest date
   for (let index = 0; index < parameter.usageRecord.length; index++) {
     const element = parameter.usageRecord[index];
-    const usageDate = element.timestamp;
+    const usageDate = Math.floor(Number(element.timestamp) / 1000);
     const greatestUpdateDate = labels[labels.length - 1];
     const differenceFromUsageDate = (usageDate as number) - greatestUpdateDate;
 
@@ -253,10 +253,10 @@ function MeteredChart({ parameter }: { parameter: Parameters }) {
   // add the quantity for each usage record to the label array
   for (let index = 0; index < parameter.usageRecord.length; index++) {
     const element = parameter.usageRecord[index];
-    const usageDate = element.timestamp;
+    const usageDate = Math.floor(Number(element.timestamp) / 1000);
     if (index > 0) {
       const lastElement = parameter.usageRecord[index - 1];
-      const lastUsageDate = lastElement.timestamp;
+      const lastUsageDate = Math.floor(Number(lastElement.timestamp) / 1000);
       if (usageDate === lastUsageDate && element.action !== "set") {
         const lastValue: number[] = dataSetsMap.get(
           formatDate(new Date((usageDate as number) * 1000), true)

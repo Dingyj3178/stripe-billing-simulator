@@ -1,12 +1,14 @@
 import React from "react";
 import InputLabel from "./InputLabel";
 import { PlusIcon, XIcon } from "@heroicons/react/solid";
-import { Field, FieldArray } from "formik";
+import { Field, FieldArray, getIn } from "formik";
 
 import addYears from "date-fns/addYears";
 import addMonths from "date-fns/addMonths";
 import addWeeks from "date-fns/addWeeks";
 import addDays from "date-fns/addDays";
+
+import DatePicker from "react-datepicker";
 
 import { Parameters } from "../typings";
 
@@ -14,10 +16,14 @@ const MetersTable = ({
   values,
   errors,
   touched,
+  handleBlur,
+  setFieldValue,
 }: {
   values: Parameters;
   errors: any;
   touched: any;
+  handleBlur: any;
+  setFieldValue: any;
 }) => {
   return (
     <FieldArray
@@ -78,7 +84,7 @@ const MetersTable = ({
                 arrayHelpers.insert(values.usageRecord.length, {
                   quantity: 1,
                   action: "increment",
-                  timestamp: Math.floor(updateDate!.getTime() / 1000),
+                  timestamp: updateDate,
                 });
               }}
             >
@@ -95,7 +101,7 @@ const MetersTable = ({
 
           <div>
             <div className="mt-1 flex flex-col">
-              <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+              <div className="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
                   <div className=" shadow ring-1 ring-black ring-opacity-5 md:rounded-lg ">
                     <table className=" divide-y divide-gray-300 w-full">
@@ -115,7 +121,7 @@ const MetersTable = ({
                           </th>
                           <th
                             scope="col"
-                            className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:pr-12"
+                            className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 "
                           >
                             action
                           </th>
@@ -142,7 +148,7 @@ const MetersTable = ({
                             <td className="whitespace-nowrap px-1 py-4 text-sm text-gray-500">
                               <Field name={`usageRecord.${index}.quantity`}>
                                 {({ field }: { field: any }) => (
-                                  <div className=" relative group">
+                                  <div className="w-14 relative group">
                                     <input
                                       className={
                                         errors &&
@@ -180,7 +186,7 @@ const MetersTable = ({
                             <td className="whitespace-nowrap px-1 py-4 text-sm text-gray-500">
                               <Field name={`usageRecord.${index}.action`}>
                                 {({ field }: { field: any }) => (
-                                  <div className="w-18 block relative group">
+                                  <div className="w-16 block relative group">
                                     <select
                                       className={
                                         errors &&
@@ -222,8 +228,8 @@ const MetersTable = ({
                             <td className="whitespace-nowrap px-1 py-4 text-sm text-gray-500 group relative">
                               <Field name={`usageRecord.${index}.timestamp`}>
                                 {({ field }: { field: any }) => (
-                                  <div className="w-32 ">
-                                    <input
+                                  <div className="w-42 z-50 float-right">
+                                    {/* <input
                                       className={
                                         errors &&
                                         errors.usageRecord &&
@@ -238,6 +244,35 @@ const MetersTable = ({
                                       }
                                       type="number"
                                       {...field}
+                                    /> */}
+                                    <DatePicker
+                                      name={`usageRecord.${index}.timestamp`}
+                                      id="timestamp"
+                                      selected={
+                                        getIn(
+                                          values,
+                                          `usageRecord[${index}]['timestamp']`
+                                        ) || ""
+                                      }
+                                      showDisabledMonthNavigation
+                                      nextMonthButtonLabel=">"
+                                      previousMonthButtonLabel="<"
+                                      onChange={(e) =>
+                                        setFieldValue(
+                                          `usageRecord[${index}]['timestamp']`,
+                                          e
+                                        )
+                                      }
+                                      onBlur={handleBlur}
+                                      value={
+                                        getIn(
+                                          values,
+                                          `usageRecord[${index}]['timestamp']`
+                                        ) || ""
+                                      }
+                                      autoComplete="off"
+                                      showTimeInput
+                                      dateFormat="MM/dd/yyyy hh:mm:ss"
                                     />
                                   </div>
                                 )}

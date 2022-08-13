@@ -100,15 +100,18 @@ export default function Home({ queryValue }: { queryValue: any }) {
           { up_to: "inf", unit_amount: 1000, flat_amount: 0 },
         ],
     usageRecord: queryValue.usageRecord
-      ? queryValue.usageRecord.map((i: any) => JSON.parse(i))
+      ? queryValue.usageRecord
+          .map((i: any) => JSON.parse(i))
+          .map((i: any) => ({
+            quantity: i.quantity,
+            action: i.action,
+            timestamp: new Date(i.timestamp * 1000),
+          }))
       : [
           {
             quantity: 1,
             action: "increment",
-            timestamp: Math.floor(
-              Number(setHours(setMinutes(setSeconds(new Date(), 0), 0), 0)) /
-                1000
-            ),
+            timestamp: setHours(setMinutes(setSeconds(new Date(), 0), 0), 0),
           },
         ],
   };
@@ -141,9 +144,7 @@ export default function Home({ queryValue }: { queryValue: any }) {
       {
         quantity: 1,
         action: "increment",
-        timestamp: Math.floor(
-          Number(setHours(setMinutes(setSeconds(new Date(), 0), 0), 0)) / 1000
-        ),
+        timestamp: setHours(setMinutes(setSeconds(new Date(), 0), 0), 0),
       },
     ],
   });
@@ -224,9 +225,13 @@ export default function Home({ queryValue }: { queryValue: any }) {
                       pricingTiers: values.pricingTiers.map((i) =>
                         JSON.stringify(i)
                       ),
-                      usageRecord: values.usageRecord.map((i) =>
-                        JSON.stringify(i)
-                      ),
+                      usageRecord: values.usageRecord
+                        .map((i) => ({
+                          quantity: i.quantity,
+                          action: i.action,
+                          timestamp: Math.floor(Number(i.timestamp) / 1000),
+                        }))
+                        .map((i) => JSON.stringify(i)),
                     },
                     { arrayFormat: "index" }
                   )}`,
@@ -753,9 +758,10 @@ export default function Home({ queryValue }: { queryValue: any }) {
                                 </option>
                               </select>
                             </div>
-                            {touched.usage_type && errors.usage_type ? (
+                            {touched.aggregate_usage &&
+                            errors.aggregate_usage ? (
                               <div className="text-sm text-red-600">
-                                {errors.usage_type}
+                                {errors.aggregate_usage}
                               </div>
                             ) : null}
                           </div>
@@ -763,6 +769,8 @@ export default function Home({ queryValue }: { queryValue: any }) {
                             values={values}
                             errors={errors}
                             touched={touched}
+                            handleBlur={handleBlur}
+                            setFieldValue={setFieldValue}
                           />
                         </>
                       ) : null}

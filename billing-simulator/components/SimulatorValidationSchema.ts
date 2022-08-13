@@ -116,6 +116,7 @@ function SimulatorValidationSchema() {
     currency: Yup.string()
       .oneOf(["usd", "aud", "jpy", "cny", "nzd", "eur", "sgd"])
       .required("Required"),
+    aggregate_usage: Yup.string().oneOf(["sum"]).required("Required"),
     unit_amount: Yup.number()
       .required("Required")
       .test({

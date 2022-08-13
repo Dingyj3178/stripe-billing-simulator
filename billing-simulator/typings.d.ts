@@ -15,7 +15,7 @@ export type pricingTiers = {
 export type usageRecord = {
   quantity: number;
   action: "set" | "increment";
-  timestamp: number | "now";
+  timestamp: Date;
 };
 
 export type Parameters = {
