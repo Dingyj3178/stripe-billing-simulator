@@ -35,6 +35,7 @@ function Period({ parameter }: { parameter: Parameters }) {
   const timeline = result.timeline;
   const startPoint = result.startPoint;
   const updatePoint = result.updatePoint;
+  const secondUpdatePoint = result.secondUpdatePoint;
   const trialEndPoint = result.trialEndPoint;
   const billingPoint = result.billingPoint;
 
@@ -157,6 +158,37 @@ function Period({ parameter }: { parameter: Parameters }) {
                 : "line-billing-date"
             }
             end="line-update-point"
+            strokeWidth={2}
+            dashness
+            showTail
+            labels={<div className=" mt-20">Biling Cycle</div>}
+            tailShape="arrow1"
+            headShape="arrow1"
+          />
+        </div>
+        <div>
+          <div
+            className={classNames(
+              "w-3 h-3  rounded-full absolute place-items-center grid"
+            )}
+            style={{
+              left: (width - 6) * (secondUpdatePoint / timeline) + "px",
+            }}
+          >
+            <div
+              id="line-second-update-point"
+              className=" w-1 h-12 bg-[#0A2540]"
+            />
+          </div>
+          <Xarrow
+            startAnchor={"right"}
+            endAnchor={"left"}
+            // path="straight"
+            color="#0A2540"
+            headSize={4}
+            tailSize={4}
+            start="line-update-point"
+            end="line-second-update-point"
             strokeWidth={2}
             dashness
             showTail

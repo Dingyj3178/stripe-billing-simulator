@@ -33,6 +33,14 @@ export const eventPointCalculator = (parameter: Parameters) => {
       : parameter.interval === "week"
       ? addDays(new Date(endDate!), parameter.interval_count * 7)
       : addDays(new Date(endDate!), parameter.interval_count);
+  const secondUpdateDate =
+    parameter.interval === "year"
+      ? addDays(new Date(endDate!), parameter.interval_count * 365 * 2)
+      : parameter.interval === "month"
+      ? addMonths(new Date(endDate!), parameter.interval_count * 2)
+      : parameter.interval === "week"
+      ? addDays(new Date(endDate!), parameter.interval_count * 14)
+      : addDays(new Date(endDate!), parameter.interval_count * 2);
   const timelineStart =
     parameter.interval === "day"
       ? parameter.create_date
@@ -58,6 +66,18 @@ export const eventPointCalculator = (parameter: Parameters) => {
           addMonths(
             timelineStart!,
             differenceInMonths(updateDate, timelineStart!)
+          )
+        );
+  // const updatePoint = differenceInDays(updateDate, timelineStart);
+  const secondUpdatePoint =
+    parameter.interval === "day"
+      ? differenceInCalendarDays(secondUpdateDate, timelineStart!)
+      : differenceInMonths(secondUpdateDate, timelineStart!) * 30 +
+        differenceInDays(
+          secondUpdateDate,
+          addMonths(
+            timelineStart!,
+            differenceInMonths(secondUpdateDate, timelineStart!)
           )
         );
   const startPoint = differenceInDays(
@@ -126,7 +146,7 @@ export const eventPointCalculator = (parameter: Parameters) => {
         differenceInCalendarMonths(
           new Date(
             endDate!.getFullYear(),
-            endDate!.getMonth() + parameter.interval_count * 1 + 2,
+            endDate!.getMonth() + parameter.interval_count * 2 + 2,
             1
           ),
           endDate!
@@ -139,7 +159,7 @@ export const eventPointCalculator = (parameter: Parameters) => {
       timeline =
         differenceInCalendarYears(
           new Date(
-            endDate!.getFullYear() + parameter.interval_count * 1 + 1,
+            endDate!.getFullYear() + parameter.interval_count * 2 + 1,
             endDate!.getMonth(),
             1
           ),
@@ -149,7 +169,7 @@ export const eventPointCalculator = (parameter: Parameters) => {
     case "week":
       timeline = differenceInCalendarDays(
         new Date(endDate!).setDate(
-          endDate!.getDate() + parameter.interval_count * 7 + 14
+          endDate!.getDate() + parameter.interval_count * 14 + 14
         ),
         parameter.create_date!
       );
@@ -157,7 +177,7 @@ export const eventPointCalculator = (parameter: Parameters) => {
     case "day":
       timeline = differenceInCalendarDays(
         new Date(endDate!).setDate(
-          endDate!.getDate() + parameter.interval_count * 1 + 1
+          endDate!.getDate() + parameter.interval_count * 2 + 1
         ),
         parameter.create_date!
       );
@@ -172,6 +192,7 @@ export const eventPointCalculator = (parameter: Parameters) => {
     startPoint,
     billingPoint,
     trialEndPoint,
+    secondUpdatePoint,
   };
 };
 
@@ -235,17 +256,31 @@ export const widthCalculator = (
     width2 -
     width3 +
     48;
+  const width5 =
+    (windowWidth - 6) * (eventPoint.secondUpdatePoint / eventPoint.timeline) -
+    48 +
+    6 -
+    96 -
+    96 * (eventPoint.trialEndPoint === 0 ? 0 : 1) -
+    96 * (eventPoint.billingPoint === 0 ? 0 : 1) -
+    96 -
+    width1 -
+    width2 -
+    width3 -
+    width4 +
+    48;
   return {
     width1,
     width2,
     width3,
     width4,
+    width5,
   };
 };
 
 export const calculateUpdate = (
-  billing_cycle_anchor: Date,
-  trial_end: Date,
+  billing_cycle_anchor: Date | null,
+  trial_end: Date | null,
   create_date: Date,
   interval: string,
   interval_count: number

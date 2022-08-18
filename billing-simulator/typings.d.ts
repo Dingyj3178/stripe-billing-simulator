@@ -40,4 +40,5 @@ export type EventResult = {
   startPoint: number;
   billingPoint: number;
   trialEndPoint: number;
+  secondUpdatePoint: number;
 };
