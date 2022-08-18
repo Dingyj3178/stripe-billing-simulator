@@ -48,20 +48,22 @@ function calculatePrice(
     let price: number = 0;
     for (let index = 0; index < parameter.pricingTiers.length; index++) {
       const element = parameter.pricingTiers[index];
-      if (
-        index === parameter.pricingTiers.length - 1 ||
-        usage === element.up_to
-      ) {
-        price = element.unit_amount * i + element.flat_amount;
-        break;
-      } else if (
-        usage > element.up_to &&
-        usage <= parameter.pricingTiers[index + 1].up_to
-      ) {
-        price =
-          parameter.pricingTiers[index + 1].unit_amount * i +
-          parameter.pricingTiers[index + 1].flat_amount;
-        break;
+      if (i > 0) {
+        if (
+          index === parameter.pricingTiers.length - 1 ||
+          usage === element.up_to
+        ) {
+          price = element.unit_amount * i + element.flat_amount;
+          break;
+        } else if (
+          usage > element.up_to &&
+          usage <= parameter.pricingTiers[index + 1].up_to
+        ) {
+          price =
+            parameter.pricingTiers[index + 1].unit_amount * i +
+            parameter.pricingTiers[index + 1].flat_amount;
+          break;
+        }
       }
     }
     return price;
