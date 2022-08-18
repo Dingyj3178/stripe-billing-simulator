@@ -488,10 +488,15 @@ export default function Home({ queryValue }: { queryValue: any }) {
                         />
                         <div className="mt-1">
                           <input
+                            disabled={values.tiers_mode !== ""}
                             type="number"
                             name="unit_amount"
                             id="unit_amount"
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                            className={
+                              values.tiers_mode !== ""
+                                ? "shadow-sm text-gray-500 bg-gray-100 block w-full sm:text-sm border-gray-300 rounded-md"
+                                : "shadow-sm  focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                            }
                             value={values.unit_amount}
                             onBlur={handleBlur}
                             onChange={handleChange}
