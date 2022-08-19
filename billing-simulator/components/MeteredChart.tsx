@@ -63,6 +63,9 @@ function calculatePrice(
             parameter.pricingTiers[index + 1].unit_amount * i +
             parameter.pricingTiers[index + 1].flat_amount;
           break;
+        } else if (usage <= element.up_to) {
+          price = element.unit_amount * i + element.flat_amount;
+          break;
         }
       }
     }
