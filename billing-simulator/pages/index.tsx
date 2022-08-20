@@ -822,12 +822,12 @@ export default function Home({ queryValue }: { queryValue: any }) {
                   <Period parameter={parameter} />
                 </div>
               </div>
-              <div className="mt-4">
-                <PricingChart pricingData={parameter} />
-              </div>
               {parameter.usage_type === "metered" ? (
                 <MeteredChart parameter={parameter} />
               ) : null}
+              <div className="mt-4">
+                <PricingChart pricingData={parameter} />
+              </div>
               <div>
                 <h3 className="text-lg leading-6 font-medium text-gray-900 mt-4 mb-2">
                   Postman Import Script
