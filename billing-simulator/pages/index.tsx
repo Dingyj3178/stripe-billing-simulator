@@ -854,7 +854,6 @@ export default function Home({ queryValue }: { queryValue: any }) {
               <div className="mt-4">
                 <PricingChart pricingData={parameter} />
               </div>
-              <div>
               <div className=" sr-only ">
                 <h3 className="text-lg leading-6 font-medium text-gray-900 mt-4 mb-2">
                   Postman Import Script
