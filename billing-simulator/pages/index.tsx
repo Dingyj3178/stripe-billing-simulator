@@ -811,7 +811,7 @@ export default function Home({ queryValue }: { queryValue: any }) {
                           Postman Script
                         </button>
                         <p className="before:contents-['']  before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99]  hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block w-52   absolute bottom-[42px] left-[10px]  shadow-lg	  ">
-                          Generate an postman script to simulate the scenario
+                          Generate a postman script to simulate the scenario
                           with with actual stripe API calls.
                         </p>
                       </div>
