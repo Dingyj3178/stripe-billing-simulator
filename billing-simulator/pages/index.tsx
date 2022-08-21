@@ -52,6 +52,18 @@ const Submission = () => {
   return null;
 };
 
+const downloadPostmanScript = (parameter: Parameters) => {
+  const element = document.createElement("a");
+  const file = new Blob([postmanExport(parameter)], {
+    type: "text/plain",
+  });
+  element.href = URL.createObjectURL(file);
+  element.download = "PostmanScript.txt";
+  document.body.appendChild(element);
+  element.click();
+  return undefined;
+};
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryValue = queryString.parse(context.resolvedUrl.slice(2), {
     arrayFormat: "index",
@@ -191,7 +203,7 @@ export default function Home({ queryValue }: { queryValue: any }) {
           <link rel="icon" href="/billing-larma.svg" />
         </Head>
 
-        <div className="lg:grid lg:grid-cols-3 lg:gap-6">
+        <div className="lg:grid lg:grid-cols-3 lg:gap-6 mb-10">
           <div className="md:col-span-1">
             <Formik
               initialValues={initValues}
@@ -789,6 +801,20 @@ export default function Home({ queryValue }: { queryValue: any }) {
                   </div>
                   <div className="pt-5">
                     <div className="flex justify-end">
+                      <div className="relative group">
+                        <button
+                          onClick={() => {
+                            downloadPostmanScript(parameter);
+                          }}
+                          className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
+                          Postman Script
+                        </button>
+                        <p className="before:contents-['']  before:absolute before:-bottom-3 before:left-0.5 before:w-5 before:h-5 before:hover:visible z-[99]  hover:visible prose prose-sm prose-indigo rounded invisible group-hover:visible parameter-tooltip  bg-white  p-2 text-sm inline-block w-52   absolute bottom-[42px] left-[10px]  shadow-lg	  ">
+                          Generate an postman script to simulate the scenario
+                          with with actual stripe API calls.
+                        </p>
+                      </div>
                       <button
                         type="submit"
                         className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -828,12 +854,12 @@ export default function Home({ queryValue }: { queryValue: any }) {
               {parameter.usage_type === "metered" ? (
                 <MeteredChart parameter={parameter} />
               ) : null}
-              <div>
+              <div className=" sr-only ">
                 <h3 className="text-lg leading-6 font-medium text-gray-900 mt-4 mb-2">
                   Postman Import Script
                 </h3>
               </div>
-              <div className=" relative group mb-10">
+              <div className=" relative group mb-10 sr-only">
                 <button
                   type="button"
                   className=" flex items-center justify-center invisible group-hover:visible  h-8 w-8 group  rounded-md  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 absolute  top-1 right-4 z-50"
