@@ -132,9 +132,6 @@ export default function Home({ queryValue }: { queryValue: any }) {
   // const { intial_create_date, intial_interval_count } = router.query;
 
   let [isShowing, setIsShowing] = useState(false);
-  // const [pricingTiers, setPricingTiers] = useState([
-  //   { id: 1, up_to: 1, unit_amount: 1000, flat_amount: 0 },
-  // ]);
   let [, , resetIsShowing] = useTimeoutFn(() => setIsShowing(false), 1000);
   const [parameter, setParameter] = useState<Parameters>({
     create_date: setHours(setMinutes(setSeconds(new Date(), 0), 0), 0),
