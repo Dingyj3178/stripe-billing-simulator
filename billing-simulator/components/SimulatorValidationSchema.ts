@@ -45,27 +45,27 @@ function SimulatorValidationSchema() {
             return new Date(value!) > new Date(this.parent.trial_end);
           } else return true;
         },
-      })
-      .test({
-        name: "billing_cycle_anchor",
-        exclusive: false,
-        params: {},
-        message: `billing_cycle_anchor cannot be later than next natural billing date for plan`,
-        test: function (value) {
-          // You can access the price field with `this.parent`.
-          if (value !== null) {
-            return (
-              new Date(value!) <=
-              checkNextNaturalUpdate(
-                this.parent.trial_end,
-                this.parent.create_date,
-                this.parent.interval,
-                this.parent.interval_count
-              )
-            );
-          } else return true;
-        },
       }),
+    // .test({
+    //   name: "billing_cycle_anchor",
+    //   exclusive: false,
+    //   params: {},
+    //   message: `billing_cycle_anchor cannot be later than next natural billing date for plan`,
+    //   test: function (value) {
+    //     // You can access the price field with `this.parent`.
+    //     if (value !== null) {
+    //       return (
+    //         new Date(value!) <=
+    //         checkNextNaturalUpdate(
+    //           this.parent.trial_end,
+    //           this.parent.create_date,
+    //           this.parent.interval,
+    //           this.parent.interval_count
+    //         )
+    //       );
+    //     } else return true;
+    //   },
+    // }),
     trial_end: Yup.string()
       .nullable()
       .test({
