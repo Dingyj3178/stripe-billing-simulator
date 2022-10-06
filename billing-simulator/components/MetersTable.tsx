@@ -117,7 +117,7 @@ const MetersTable = ({
                             scope="col"
                             className="px-1 py-3.5 text-left text-sm font-semibold text-gray-900"
                           >
-                            quality
+                            quantity
                           </th>
                           <th
                             scope="col"
